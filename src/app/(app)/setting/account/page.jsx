@@ -5,51 +5,73 @@ import Paginator from '@/components/Paginator'
 import axios from '@/lib/axios'
 import { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-
-// export const metadata = {
-//     title: 'Laravel - Account',
-// }
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
 
 export default function Account() {
     const [account, setAccount] = useState(null) // Set initial state to null
     const [categoryAccount, setCategoryAccount] = useState(null) // Set initial state to null
-    let [newAccount, setNewAccount] = useState({
+    const [newAccount, setNewAccount] = useState({
         name: '',
-        category_id: 0,
+        category_id: '',
         st_balance: 0,
     })
-    let [notification, setNotification] = useState('')
-    const [errors, setErrors] = useState([])
-    let [isModalCreateAccountOpen, setIsModalCreateAccountOpen] =
+    const [selectedAccount, setSelectedAccount] = useState(null)
+    const [notification, setNotification] = useState('')
+    const [errors, setErrors] = useState([]) // Store validation errors
+    const [isModalCreateAccountOpen, setIsModalCreateAccountOpen] =
         useState(false)
 
+    // Handle Create Account
     const handleCreateAccount = async e => {
         e.preventDefault()
         try {
             const response = await axios.post('/api/auth/accounts', newAccount)
+
             setNotification(response.data.message)
+            if (response.status === 201) {
+                // Reset form fields and close modal on success
+                setNewAccount({
+                    name: '',
+                    category_id: '',
+                    st_balance: 0,
+                })
+                setIsModalCreateAccountOpen(false)
+                // console.log('Form reset:', newAccount, response.status)
+            }
             fetchAccount()
-            console.log(response.data)
-            // setIsModalCreateAccountOpen(false)
-            console.log(newAccount)
         } catch (error) {
-            setErrors(error.response?.data?.errors || ['Something went wrong.'])
+            if (error.response && error.response.status === 422) {
+                setErrors(error.response.data.errors || ['Validation Error'])
+            }
         }
     }
 
-    const fetchAccount = async url => {
+    // Fetch Accounts
+    const fetchAccount = async (url = '/api/auth/accounts') => {
         try {
-            const response = await axios.get(url || '/api/auth/accounts')
+            const response = await axios.get(url)
             setAccount(response.data.data)
         } catch (error) {
             setErrors(error.response?.data?.errors || ['Something went wrong.'])
         }
     }
 
+    // Fetch Categories
     const fetchCategoryAccount = async () => {
         try {
             const response = await axios.get('api/auth/category-accounts')
             setCategoryAccount(response.data.data)
+        } catch (error) {
+            setErrors(error.response?.data?.errors || ['Something went wrong.'])
+        }
+    }
+
+    const handleDeleteAccount = async id => {
+        try {
+            const response = await axios.delete(`api/auth/accounts/${id}`)
+            setNotification(response.data.message)
+            fetchAccount()
+            console.log(response)
         } catch (error) {
             setErrors(error.response?.data?.errors || ['Something went wrong.'])
         }
@@ -63,10 +85,6 @@ export default function Account() {
     const handleChangePage = url => {
         fetchAccount(url)
     }
-    // console.log(account)
-    if (account === null || categoryAccount === null) {
-        return <div>Loading...</div>
-    }
 
     return (
         <>
@@ -74,7 +92,9 @@ export default function Account() {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div>
+                        <div
+                            className="fixed top-0 right-0 px-6 py-4 sm:block"
+                            onClick={() => setNotification('')}>
                             {notification && (
                                 <div className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md">
                                     <div className="flex">
@@ -97,10 +117,12 @@ export default function Account() {
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
                             <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl mb-2"
                                 onClick={() =>
                                     setIsModalCreateAccountOpen(true)
                                 }>
-                                Open dialog
+                                Tambah Account{' '}
+                                <PlusCircleIcon className="w-5 h-5 inline" />
                             </button>
                             <Dialog
                                 open={isModalCreateAccountOpen}
@@ -182,18 +204,9 @@ export default function Account() {
                                                                 })
                                                             }
                                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                                            {categoryAccount
-                                                                ?.data
-                                                                ?.length ===
-                                                            0 ? (
-                                                                <option value="">
-                                                                    -
-                                                                </option>
-                                                            ) : (
-                                                                <option value="">
-                                                                    -
-                                                                </option>
-                                                            )}
+                                                            <option value="">
+                                                                Select Category
+                                                            </option>
                                                             {categoryAccount?.map(
                                                                 item => (
                                                                     <option
@@ -260,26 +273,12 @@ export default function Account() {
                                     </div>
                                 </div>
                             </Dialog>
-                            {errors.length > 0 && (
-                                <div className="text-red-500 mb-4">
-                                    {errors.map((error, index) => (
-                                        <p key={index}>{error}</p>
-                                    ))}
-                                </div>
-                            )}
-                            <table className="w-full table-auto">
+                            <table className="table">
                                 <thead>
                                     <tr>
-                                        <th className="border px-6 py-4">ID</th>
-                                        <th className="border px-6 py-4">
-                                            Name
-                                        </th>
-                                        <th className="border px-6 py-4">
-                                            Email
-                                        </th>
-                                        <th className="border px-6 py-4">
-                                            Role
-                                        </th>
+                                        <th className="">Name</th>
+                                        <th className="">Balance</th>
+                                        <th className="">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -294,28 +293,56 @@ export default function Account() {
                                     ) : (
                                         account?.data?.map(account => (
                                             <tr key={account.id}>
-                                                <td className="border px-6 py-4">
-                                                    {account.id}
+                                                <td className="">
+                                                    <span className="font-bold text-blue-800">
+                                                        {account.acc_name}
+                                                    </span>
+                                                    <br />
+                                                    <span className="text-slate-600">
+                                                        {account.acc_code} #{' '}
+                                                        {account.account?.name}{' '}
+                                                        #{' '}
+                                                        {account?.warehouse
+                                                            ?.name ??
+                                                            'NotAssociated'}
+                                                    </span>
                                                 </td>
-                                                <td className="border px-6 py-4">
-                                                    {account.acc_name}
+                                                <td className="text-right text-lg">
+                                                    {new Intl.NumberFormat(
+                                                        'id-ID',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'IDR',
+                                                        },
+                                                    ).format(
+                                                        account.st_balance,
+                                                    )}
                                                 </td>
-                                                <td className="border px-6 py-4">
-                                                    {account.acc_code}
-                                                </td>
-                                                <td className="border px-6 py-4">
-                                                    {account.warehouse_id}
+                                                <td className="text-center">
+                                                    <button
+                                                        onClick={() =>
+                                                            handleDeleteAccount(
+                                                                account.id,
+                                                            )
+                                                        }
+                                                        className="text-white min-w-28 bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-xl text-sm px-5 py-3 ">
+                                                        {' '}
+                                                        Delete
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))
                                     )}
                                 </tbody>
                             </table>
-
-                            <Paginator
-                                links={account}
-                                handleChangePage={handleChangePage}
-                            />
+                            {/* {account?.data?.length === 0 ? (
+                                ''
+                            ) : (
+                                <Paginator
+                                    links={account}
+                                    handleChangePage={handleChangePage}
+                                />
+                            )} */}
                         </div>
                     </div>
                 </div>

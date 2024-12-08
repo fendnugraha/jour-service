@@ -17,7 +17,7 @@ export default function Paginator({ links, handleChangePage }) {
             </div>
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between my-4">
                 <div>
-                    <p className="text-xs text-gray-700 p-1">
+                    <p className="text-xs sm:text-sm text-gray-700 p-1">
                         Showing
                         <span className="font-medium mx-1">{links.from}</span>
                         to
@@ -41,14 +41,38 @@ export default function Paginator({ links, handleChangePage }) {
                                       disabled={!link.url}
                                       className={
                                           link.active
-                                              ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-xs font-medium'
+                                              ? 'z-10 bg-indigo-500 text-white border-indigo-500 scale-110 relative inline-flex items-center px-4 py-2 border text-sm font-bold'
                                               : 'border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-xs font-medium'
                                       }>
-                                      {link.label === '&laquo; Previous'
-                                          ? '<'
-                                          : link.label === 'Next &raquo;'
-                                            ? '>'
-                                            : link.label}
+                                      {link.label === '&laquo; Previous' ? (
+                                          <svg
+                                              className="h-5 w-5"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              viewBox="0 0 20 20"
+                                              fill="currentColor"
+                                              aria-hidden="true">
+                                              <path
+                                                  fillRule="evenodd"
+                                                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                  clipRule="evenodd"
+                                              />
+                                          </svg>
+                                      ) : link.label === 'Next &raquo;' ? (
+                                          <svg
+                                              className="h-5 w-5"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              viewBox="0 0 20 20"
+                                              fill="currentColor"
+                                              aria-hidden="true">
+                                              <path
+                                                  fillRule="evenodd"
+                                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                  clipRule="evenodd"
+                                              />
+                                          </svg>
+                                      ) : (
+                                          link.label
+                                      )}
                                   </button>
                               ))
                             : null}
