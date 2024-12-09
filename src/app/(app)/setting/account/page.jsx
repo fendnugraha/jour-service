@@ -5,61 +5,21 @@ import Paginator from '@/components/Paginator'
 import axios from '@/lib/axios'
 import { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import { PlusCircleIcon } from '@heroicons/react/24/solid'
+import {
+    PencilSquareIcon,
+    PlusCircleIcon,
+    TrashIcon,
+} from '@heroicons/react/24/solid'
 import Input from '@/components/Input'
+import FormCreateAccount from './formCreateAccount'
 
 export default function Account() {
-    const [account, setAccount] = useState(null) // Set initial state to null
-    const [categoryAccount, setCategoryAccount] = useState(null) // Set initial state to null
-    const [newAccount, setNewAccount] = useState({
-        name: '',
-        category_id: '',
-        st_balance: 0,
-    })
+    const [account, setAccount] = useState(null)
     const [selectedAccount, setSelectedAccount] = useState([])
     const [notification, setNotification] = useState('')
     const [errors, setErrors] = useState([]) // Store validation errors
     const [isModalCreateAccountOpen, setIsModalCreateAccountOpen] =
         useState(false)
-
-    // Handle Create Account
-    const handleCreateAccount = async e => {
-        e.preventDefault()
-        try {
-            const response = await axios.post('/api/auth/accounts', newAccount)
-
-            setNotification(response.data.message)
-            if (response.status === 201) {
-                // Reset form fields and close modal on success
-                setNewAccount({
-                    name: '',
-                    category_id: '',
-                    st_balance: 0,
-                })
-                setIsModalCreateAccountOpen(false)
-                // console.log('Form reset:', newAccount, response.status)
-            }
-            fetchAccount()
-        } catch (error) {
-            // Check the structure of error.response.data before setting the error state
-            let err = []
-            if (error.response && error.response.data) {
-                // Assuming error.response.data could be an array of messages or an object
-                if (Array.isArray(error.response.data)) {
-                    err = [...error.response.data]
-                } else if (typeof error.response.data === 'string') {
-                    err = [error.response.data]
-                } else {
-                    err = ['Something went wrong.']
-                }
-            } else {
-                err = ['Network or server error. Please try again later.']
-            }
-
-            setErrors(err)
-            console.log(err)
-        }
-    }
 
     // Fetch Accounts
     const fetchAccount = async (url = '/api/auth/accounts') => {
@@ -71,26 +31,14 @@ export default function Account() {
         }
     }
 
-    // Fetch Categories
-    const fetchCategoryAccount = async () => {
-        try {
-            const response = await axios.get('api/auth/category-accounts')
-            setCategoryAccount(response.data.data)
-        } catch (error) {
-            setErrors(error.response?.data?.errors || ['Something went wrong.'])
-        }
-    }
-
     const handleDeleteAccount = async id => {
         try {
             const response = await axios.delete(`api/auth/accounts/${id}`)
             setNotification(response.data.message)
             fetchAccount()
-            console.log(response)
         } catch (error) {
             setErrors(error.response?.data?.errors || ['Something went wrong.'])
             setNotification(error.response.data.message)
-            console.log(error.response)
         }
     }
 
@@ -106,9 +54,6 @@ export default function Account() {
             }
         })
     }
-    useEffect(() => {
-        console.log('Updated selected accounts:', selectedAccount)
-    }, [selectedAccount])
 
     const handleDeleteSelectedAccounts = async () => {
         try {
@@ -126,8 +71,19 @@ export default function Account() {
 
     useEffect(() => {
         fetchAccount('/api/auth/accounts')
-        fetchCategoryAccount()
     }, [])
+
+    useEffect(() => {
+        if (notification || errors.length > 0) {
+            const timeoutId = setTimeout(() => {
+                setNotification('')
+                setErrors([])
+            }, 3000) // Notification disappears after 3 seconds
+
+            // Cleanup timeout on component unmount
+            return () => clearTimeout(timeoutId)
+        }
+    }, [notification, errors])
 
     const handleChangePage = url => {
         fetchAccount(url)
@@ -221,124 +177,19 @@ export default function Account() {
                                                     </button>
                                                 </div>
                                                 <div>
-                                                    <form>
-                                                        <div className="mb-4">
-                                                            <label
-                                                                htmlFor="name"
-                                                                className="block mb-2 text-sm font-medium text-gray-900">
-                                                                Account Name
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                id="name"
-                                                                value={
-                                                                    newAccount.name
-                                                                }
-                                                                onChange={e =>
-                                                                    setNewAccount(
-                                                                        {
-                                                                            ...newAccount,
-                                                                            name: e
-                                                                                .target
-                                                                                .value,
-                                                                        },
-                                                                    )
-                                                                }
-                                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                                placeholder="John Doe"
-                                                            />
-                                                        </div>
-                                                        <div className="mb-4">
-                                                            <label
-                                                                htmlFor="category"
-                                                                className="block mb-2 text-sm font-medium text-gray-900">
-                                                                Category
-                                                            </label>
-                                                            <select
-                                                                id="category"
-                                                                value={
-                                                                    newAccount.category_id
-                                                                }
-                                                                onChange={e =>
-                                                                    setNewAccount(
-                                                                        {
-                                                                            ...newAccount,
-                                                                            category_id:
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                        },
-                                                                    )
-                                                                }
-                                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                                                                <option value="">
-                                                                    Select
-                                                                    Category
-                                                                </option>
-                                                                {categoryAccount?.map(
-                                                                    item => (
-                                                                        <option
-                                                                            key={
-                                                                                item.id
-                                                                            }
-                                                                            value={
-                                                                                item.id
-                                                                            }>
-                                                                            {
-                                                                                item.name
-                                                                            }
-                                                                        </option>
-                                                                    ),
-                                                                )}
-                                                            </select>
-                                                        </div>
-                                                        <div className="mb-4">
-                                                            <label
-                                                                htmlFor="st_balance"
-                                                                className="block mb-2 text-sm font-medium text-gray-900">
-                                                                Starting Balance
-                                                            </label>
-                                                            <input
-                                                                type="number"
-                                                                id="st_balance"
-                                                                value={
-                                                                    newAccount.st_balance
-                                                                }
-                                                                onChange={e =>
-                                                                    setNewAccount(
-                                                                        {
-                                                                            ...newAccount,
-                                                                            st_balance:
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                        },
-                                                                    )
-                                                                }
-                                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                                placeholder="0"
-                                                            />
-                                                        </div>
-                                                        <div className="flex justify-end gap-2">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    setIsModalCreateAccountOpen(
-                                                                        false,
-                                                                    )
-                                                                }
-                                                                className="text-white min-w-28 bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-xl text-sm px-5 py-3 ">
-                                                                Cancel
-                                                            </button>
-                                                            <button
-                                                                onClick={
-                                                                    handleCreateAccount
-                                                                }
-                                                                className="text-white min-w-28 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-sm px-5 py-3 ">
-                                                                Save
-                                                            </button>
-                                                        </div>
-                                                    </form>
+                                                    <FormCreateAccount
+                                                        isModalOpen={
+                                                            setIsModalCreateAccountOpen
+                                                        }
+                                                        notification={message =>
+                                                            setNotification(
+                                                                message,
+                                                            )
+                                                        }
+                                                        fetchAccount={
+                                                            fetchAccount
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -407,15 +258,18 @@ export default function Account() {
                                                     )}
                                                 </td>
                                                 <td className="text-center">
+                                                    <button className="text-white min-w-28 bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm py-1">
+                                                        <PencilSquareIcon className="w-5 h-5 inline" />
+                                                    </button>
                                                     <button
                                                         onClick={() =>
                                                             handleDeleteAccount(
                                                                 account.id,
                                                             )
                                                         }
-                                                        className="text-white min-w-28 bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-xl text-sm px-5 py-3 ">
+                                                        className="text-white min-w-28 bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-sm text-sm py-1">
                                                         {' '}
-                                                        Delete
+                                                        <TrashIcon className="w-5 h-5 inline" />
                                                     </button>
                                                 </td>
                                             </tr>

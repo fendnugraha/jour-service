@@ -1,8 +1,12 @@
 import Header from '@/app/(app)/Header'
 import {
     ArrowRightIcon,
+    BuildingLibraryIcon,
+    CubeIcon,
     ListBulletIcon,
+    PresentationChartBarIcon,
     UserIcon,
+    UsersIcon,
 } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 
@@ -47,7 +51,7 @@ export default function Setting() {
                                 </div>
                                 <div className="sm:relative bg-white p-3 sm:p-6 dark:bg-gray-800 overflow-hidden shadow-md rounded-xl h-32 sm:h-60 flex sm:justify-center justify-evenly items-center flex-col gap-1">
                                     <h1 className="text-5xl sm:text-8xl font-bold text-center">
-                                        <i className="fa-solid fa-warehouse"></i>
+                                        <BuildingLibraryIcon className="w-24 h-24" />
                                     </h1>
                                     <Link
                                         href="/"
@@ -61,7 +65,7 @@ export default function Setting() {
                                 </div>
                                 <div className="sm:relative bg-white p-3 sm:p-6 dark:bg-gray-800 overflow-hidden shadow-md rounded-xl h-32 sm:h-60 flex sm:justify-center justify-evenly items-center flex-col gap-1">
                                     <h1 className="text-5xl sm:text-8xl font-bold text-center">
-                                        <i className="fa-solid fa-address-book"></i>
+                                        <UsersIcon className="w-24 h-24" />
                                     </h1>
                                     <Link
                                         href="/"
@@ -75,7 +79,7 @@ export default function Setting() {
                                 </div>
                                 <div className="sm:relative bg-white p-3 sm:p-6 dark:bg-gray-800 overflow-hidden shadow-md rounded-xl h-32 sm:h-60 flex sm:justify-center justify-evenly items-center flex-col gap-1">
                                     <h1 className="text-5xl sm:text-8xl font-bold text-center">
-                                        <i className="fa-solid fa-boxes-stacked"></i>
+                                        <CubeIcon className="w-24 h-24" />
                                     </h1>
                                     <Link
                                         href="/"
