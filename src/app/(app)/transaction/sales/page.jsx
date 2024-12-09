@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import Input from '@/components/Input'
 import ProductCard from '@/components/ProductCard'
 import axios from '@/lib/axios'
@@ -28,6 +28,7 @@ const Sales = () => {
     const [productList, setProductList] = useState([])
     const [search, setSearch] = useState('')
     const debouncedSearch = useDebounce(search, 500) // Apply debounce with 500ms delay
+    const [cart, setCart] = useState([])
 
     // Handle search input change
     const handleSearch = e => {
@@ -51,8 +52,24 @@ const Sales = () => {
     // Trigger the fetch when the debounced search term changes
     useEffect(() => {
         fetchProduct() // Trigger fetch only when debounced search changes
-    }, [debouncedSearch])
+        localStorage.setItem('cart', JSON.stringify(cart))
+        console.log(cart)
+    }, [debouncedSearch, cart])
 
+    // Add product to cart
+    const handleAddToCart = product => {
+        setCart(prevCart => [...prevCart, { ...product, quantity: 1 }])
+    }
+
+    // Remove product from cart
+    const handleRemoveFromCart = product => {
+        setCart(prevCart => prevCart.filter(item => item.id !== product.id))
+    }
+
+    // handle clear cart
+    const handleClearCart = () => {
+        setCart([])
+    }
     return (
         <>
             <Header title="Sales" />
@@ -77,6 +94,7 @@ const Sales = () => {
                                             <ProductCard
                                                 product={product}
                                                 key={product.id}
+                                                onAddToCart={handleAddToCart}
                                             />
                                         ))
                                     )}
@@ -156,6 +174,11 @@ const Sales = () => {
                                     <span className="font-bold text-yellow-200">
                                         Rp. 100.000.000
                                     </span>
+                                </button>
+                                <button
+                                    onClick={handleClearCart}
+                                    className="w-full mt-2 bg-red-500 text-white py-2 px-6  rounded-full">
+                                    Clear Cart
                                 </button>
                             </div>
                         </div>

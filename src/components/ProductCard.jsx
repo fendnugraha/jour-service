@@ -1,6 +1,6 @@
-import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/solid'
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onAddToCart }) => {
     function formatNumber(number) {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
             </small>
             <div className="flex justify-between items-center">
                 <h4 className="my-2 ">{formatNumber(product.price)}</h4>
-                <button className="">
+                <button onClick={() => onAddToCart(product)} className="">
                     <PlusCircleIcon className="w-8 h-8" />
                 </button>
             </div>
