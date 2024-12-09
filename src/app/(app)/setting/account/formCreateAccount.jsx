@@ -57,7 +57,6 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
             }
 
             setErrors(err)
-            console.log(err)
         }
     }
     return (

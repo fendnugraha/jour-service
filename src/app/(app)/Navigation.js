@@ -41,6 +41,11 @@ const Navigation = ({ user }) => {
                                 Journal
                             </NavLink>
                             <NavLink
+                                href="/transaction"
+                                active={usePathname() === '/transaction'}>
+                                Transaction
+                            </NavLink>
+                            <NavLink
                                 href="/setting"
                                 active={usePathname() === '/setting'}>
                                 Setting

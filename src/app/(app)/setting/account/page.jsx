@@ -4,7 +4,6 @@ import Header from '@/app/(app)/Header'
 import Paginator from '@/components/Paginator'
 import axios from '@/lib/axios'
 import { useState, useEffect } from 'react'
-import { Dialog } from '@headlessui/react'
 import {
     PencilSquareIcon,
     PlusCircleIcon,
@@ -12,13 +11,17 @@ import {
 } from '@heroicons/react/24/solid'
 import Input from '@/components/Input'
 import FormCreateAccount from './formCreateAccount'
+import Modal from '@/components/Modal'
 
 export default function Account() {
     const [account, setAccount] = useState(null)
     const [selectedAccount, setSelectedAccount] = useState([])
+    const [selectedUpdateAccount, setSelectedUpdateAccount] = useState(null)
     const [notification, setNotification] = useState('')
     const [errors, setErrors] = useState([]) // Store validation errors
     const [isModalCreateAccountOpen, setIsModalCreateAccountOpen] =
+        useState(false)
+    const [isModalUpdateAccountOpen, setIsModalUpdateAccountOpen] =
         useState(false)
 
     // Fetch Accounts
@@ -42,6 +45,11 @@ export default function Account() {
         }
     }
 
+    const closeModal = () => {
+        setIsModalCreateAccountOpen(false)
+        setIsModalUpdateAccountOpen(false)
+    }
+
     const handleSelectAccount = id => {
         setSelectedAccount(prevSelected => {
             // Check if the ID is already in the selectedAccount array
@@ -54,6 +62,23 @@ export default function Account() {
             }
         })
     }
+
+    const handleShowAccount = async id => {
+        try {
+            const response = await axios.get(`api/auth/accounts/${id}`)
+            setSelectedUpdateAccount(response.data.data)
+            setIsModalUpdateAccountOpen(true)
+            console.log(selectedUpdateAccount)
+        } catch (error) {
+            setErrors(error.response?.data?.errors || ['Something went wrong.'])
+            console.log(error.response)
+        }
+    }
+    useEffect(() => {
+        // if (selectedUpdateAccount) {
+        //     console.log(selectedUpdateAccount)
+        // }
+    }, [selectedUpdateAccount])
 
     const handleDeleteSelectedAccounts = async () => {
         try {
@@ -71,6 +96,7 @@ export default function Account() {
 
     useEffect(() => {
         fetchAccount('/api/auth/accounts')
+        handleShowAccount()
     }, [])
 
     useEffect(() => {
@@ -142,59 +168,70 @@ export default function Account() {
                                     Tambah Account{' '}
                                     <PlusCircleIcon className="w-5 h-5 inline" />
                                 </button>
-                                <Dialog
-                                    open={isModalCreateAccountOpen}
-                                    onClose={() =>
-                                        setIsModalCreateAccountOpen(false)
-                                    }
-                                    className="relative z-50">
-                                    <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-gray-500/70">
-                                        <div className="flex min-h-full min-w-full items-center justify-center">
-                                            <div className="bg-white min-w-full sm:min-w-[500px] p-4 rounded-2xl ">
-                                                <div className="flex justify-between mb-4">
-                                                    <h1 className="text-xl font-bold">
-                                                        Create account
-                                                    </h1>
-                                                    <button
-                                                        onClick={() =>
-                                                            setIsModalCreateAccountOpen(
-                                                                false,
-                                                            )
-                                                        }>
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth="1.5"
-                                                            stroke="currentColor"
-                                                            className="w-6 h-6">
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M6 18L18 6M6 6l12 12"
-                                                            />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                                <div>
-                                                    <FormCreateAccount
-                                                        isModalOpen={
-                                                            setIsModalCreateAccountOpen
-                                                        }
-                                                        notification={message =>
-                                                            setNotification(
-                                                                message,
-                                                            )
-                                                        }
-                                                        fetchAccount={
-                                                            fetchAccount
-                                                        }
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
+                                <Modal
+                                    isOpen={isModalCreateAccountOpen}
+                                    onClose={closeModal}
+                                    modalTitle="Create account">
+                                    <FormCreateAccount
+                                        isModalOpen={
+                                            setIsModalCreateAccountOpen
+                                        }
+                                        notification={message =>
+                                            setNotification(message)
+                                        }
+                                        fetchAccount={fetchAccount}
+                                    />
+                                </Modal>
+                                <Modal
+                                    isOpen={isModalUpdateAccountOpen}
+                                    onClose={closeModal}
+                                    modalTitle="Update account">
+                                    <div className="mb-4">
+                                        <label
+                                            htmlFor="name"
+                                            className="block mb-2 text-sm font-medium text-gray-900">
+                                            Account Name
+                                        </label>
+                                        <Input
+                                            type="text"
+                                            id="name"
+                                            defaultValue={
+                                                selectedUpdateAccount.acc_name
+                                            }
+                                            onChange={event =>
+                                                setSelectedUpdateAccount({
+                                                    ...selectedUpdateAccount,
+                                                    acc_name:
+                                                        event.target.value,
+                                                })
+                                            }
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                            placeholder="John Doe"
+                                        />
                                     </div>
-                                </Dialog>
+                                    <div className="mb-4">
+                                        <label
+                                            htmlFor="st_balance"
+                                            className="block mb-2 text-sm font-medium text-gray-900">
+                                            Starting Balance
+                                        </label>
+                                        <Input
+                                            type="number"
+                                            defaultValue={
+                                                selectedUpdateAccount.st_balance
+                                            }
+                                            onChange={event =>
+                                                setSelectedUpdateAccount({
+                                                    ...selectedUpdateAccount,
+                                                    st_balance:
+                                                        event.target.value,
+                                                })
+                                            }
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </Modal>
                             </div>
                             <table className="table">
                                 <thead>
@@ -258,7 +295,16 @@ export default function Account() {
                                                     )}
                                                 </td>
                                                 <td className="text-center">
-                                                    <button className="text-white min-w-28 bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm py-1">
+                                                    <button
+                                                        onClick={() => {
+                                                            setIsModalUpdateAccountOpen(
+                                                                true,
+                                                            )
+                                                            handleShowAccount(
+                                                                account.id,
+                                                            )
+                                                        }}
+                                                        className="text-white min-w-28 bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm py-1">
                                                         <PencilSquareIcon className="w-5 h-5 inline" />
                                                     </button>
                                                     <button
