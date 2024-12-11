@@ -68,7 +68,6 @@ export default function Account() {
             const response = await axios.get(`api/auth/accounts/${id}`)
             setSelectedUpdateAccount(response.data.data)
             setIsModalUpdateAccountOpen(true)
-            console.log(selectedUpdateAccount)
         } catch (error) {
             setErrors(error.response?.data?.errors || ['Something went wrong.'])
             console.log(error.response)
@@ -96,6 +95,11 @@ export default function Account() {
 
     useEffect(() => {
         fetchAccount('/api/auth/accounts')
+    }, [])
+
+    useEffect(() => {
+        console.log(selectedUpdateAccount)
+
         handleShowAccount()
     }, [])
 
@@ -182,56 +186,58 @@ export default function Account() {
                                         fetchAccount={fetchAccount}
                                     />
                                 </Modal>
-                                <Modal
-                                    isOpen={isModalUpdateAccountOpen}
-                                    onClose={closeModal}
-                                    modalTitle="Update account">
-                                    <div className="mb-4">
-                                        <label
-                                            htmlFor="name"
-                                            className="block mb-2 text-sm font-medium text-gray-900">
-                                            Account Name
-                                        </label>
-                                        <Input
-                                            type="text"
-                                            id="name"
-                                            defaultValue={
-                                                selectedUpdateAccount.acc_name
-                                            }
-                                            onChange={event =>
-                                                setSelectedUpdateAccount({
-                                                    ...selectedUpdateAccount,
-                                                    acc_name:
-                                                        event.target.value,
-                                                })
-                                            }
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            placeholder="John Doe"
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <label
-                                            htmlFor="st_balance"
-                                            className="block mb-2 text-sm font-medium text-gray-900">
-                                            Starting Balance
-                                        </label>
-                                        <Input
-                                            type="number"
-                                            defaultValue={
-                                                selectedUpdateAccount.st_balance
-                                            }
-                                            onChange={event =>
-                                                setSelectedUpdateAccount({
-                                                    ...selectedUpdateAccount,
-                                                    st_balance:
-                                                        event.target.value,
-                                                })
-                                            }
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                            placeholder="0"
-                                        />
-                                    </div>
-                                </Modal>
+                                {selectedUpdateAccount && (
+                                    <Modal
+                                        isOpen={isModalUpdateAccountOpen}
+                                        onClose={closeModal}
+                                        modalTitle="Update account">
+                                        <div className="mb-4">
+                                            <label
+                                                htmlFor="name"
+                                                className="block mb-2 text-sm font-medium text-gray-900">
+                                                Account Name
+                                            </label>
+                                            <Input
+                                                type="text"
+                                                id="name"
+                                                defaultValue={
+                                                    selectedUpdateAccount.acc_name
+                                                }
+                                                onChange={event =>
+                                                    setSelectedUpdateAccount({
+                                                        ...selectedUpdateAccount,
+                                                        acc_name:
+                                                            event.target.value,
+                                                    })
+                                                }
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                placeholder="John Doe"
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label
+                                                htmlFor="st_balance"
+                                                className="block mb-2 text-sm font-medium text-gray-900">
+                                                Starting Balance
+                                            </label>
+                                            <Input
+                                                type="number"
+                                                defaultValue={
+                                                    selectedUpdateAccount.st_balance
+                                                }
+                                                onChange={event =>
+                                                    setSelectedUpdateAccount({
+                                                        ...selectedUpdateAccount,
+                                                        st_balance:
+                                                            event.target.value,
+                                                    })
+                                                }
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                    </Modal>
+                                )}
                             </div>
                             <table className="table">
                                 <thead>

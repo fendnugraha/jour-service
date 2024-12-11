@@ -177,7 +177,7 @@ const Sales = () => {
             <Header title="Sales" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="overflow-hidden">
+                    <div className="overflow-auto">
                         <div className="grid grid-cols-5 gap-4 sm:h-[70vh]">
                             <div className="col-span-3">
                                 <Input
