@@ -73,11 +73,6 @@ export default function Account() {
             console.log(error.response)
         }
     }
-    useEffect(() => {
-        // if (selectedUpdateAccount) {
-        //     console.log(selectedUpdateAccount)
-        // }
-    }, [selectedUpdateAccount])
 
     const handleDeleteSelectedAccounts = async () => {
         try {
@@ -98,7 +93,7 @@ export default function Account() {
     }, [])
 
     useEffect(() => {
-        console.log(selectedUpdateAccount)
+        // console.log(selectedUpdateAccount)
 
         handleShowAccount()
     }, [])
@@ -159,13 +154,16 @@ export default function Account() {
                                 </div>
                             )}
                             <div className="flex justify-between">
+                                {selectedAccount.length > 0 && (
+                                    <button
+                                        className="btn-primary"
+                                        onClick={handleDeleteSelectedAccounts}>
+                                        Hapus terpilih {selectedAccount.length}
+                                    </button>
+                                )}
+
                                 <button
                                     className="btn-primary"
-                                    onClick={handleDeleteSelectedAccounts}>
-                                    Hapus terpilih {selectedAccount.length}
-                                </button>
-                                <button
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl mb-2"
                                     onClick={() =>
                                         setIsModalCreateAccountOpen(true)
                                     }>

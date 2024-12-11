@@ -16,7 +16,7 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
             const response = await axios.get('api/auth/category-accounts')
             setCategoryAccount(response.data.data)
         } catch (error) {
-            setErrors(error.response?.data?.errors || ['Something went wrong.'])
+            setErrors(error.response?.message || ['Something went wrong.'])
         }
     }
 
@@ -41,33 +41,11 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                 fetchAccount()
             }
         } catch (error) {
-            // Check the structure of error.response.data before setting the error state
-            let err = []
-            if (error.response && error.response.data) {
-                // Assuming error.response.data could be an array of messages or an object
-                if (Array.isArray(error.response.data)) {
-                    err = [...error.response.data]
-                } else if (typeof error.response.data === 'string') {
-                    err = [error.response.data]
-                } else {
-                    err = ['Something went wrong.']
-                }
-            } else {
-                err = ['Network or server error. Please try again later.']
-            }
-
-            setErrors(err)
+            setErrors(error.response?.data?.errors || ['Something went wrong.'])
         }
     }
     return (
         <>
-            {errors.length > 0 && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                    {errors.map((error, index) => (
-                        <p key={index}>{error}</p>
-                    ))}
-                </div>
-            )}
             <form>
                 <div className="mb-4">
                     <label
@@ -85,9 +63,12 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                                 name: e.target.value,
                             })
                         }
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${errors.name ? 'border-red-500' : ''}`}
                         placeholder="John Doe"
                     />
+                    {errors.name && (
+                        <p className="text-red-500 text-xs">{errors.name}</p>
+                    )}
                 </div>
                 <div className="mb-4">
                     <label
@@ -104,7 +85,7 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                                 category_id: e.target.value,
                             })
                         }
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${errors.category_id ? 'border-red-500' : ''}`}>
                         <option value="">Select Category</option>
                         {categoryAccount?.map(item => (
                             <option key={item.id} value={item.id}>
@@ -112,6 +93,11 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                             </option>
                         ))}
                     </select>
+                    {errors.category_id && (
+                        <p className="text-red-500 text-xs">
+                            {errors.category_id}
+                        </p>
+                    )}
                 </div>
                 <div className="mb-4">
                     <label
@@ -129,9 +115,14 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                                 st_balance: e.target.value,
                             })
                         }
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        className={`bg-gray-100 border`}
                         placeholder="0"
                     />
+                    {errors.st_balance && (
+                        <p className="text-red-500 text-xs">
+                            {errors.st_balance}
+                        </p>
+                    )}
                 </div>
                 <div className="flex justify-end gap-2">
                     <button
