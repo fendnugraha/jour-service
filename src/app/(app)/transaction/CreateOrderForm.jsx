@@ -1,10 +1,11 @@
 import Input from '@/components/Input'
 import { useAuth } from '@/hooks/auth'
 import axios from '@/lib/axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
     const { user } = useAuth({ middleware: 'auth' })
+    const [warehouse, setWarehouse] = useState(null)
     const [errors, setErrors] = useState([]) // Store validation errors
     const [newOrder, setNewOrder] = useState({
         customer_name: '',
@@ -12,8 +13,13 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
         phone_number: '',
         address: '',
         description: '',
-        warehouse_id: user.warehouse_id,
+        warehouse_id: user.role.warehouse_id,
+        user_id: user.id,
     })
+
+    // useEffect(() => {
+    //     setWarehouse(user?.role?.warehouse_id)
+    // }, [newOrder])
 
     const handleCreateOrder = async e => {
         e.preventDefault()
@@ -27,20 +33,18 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                 phone_number: '',
                 address: '',
                 description: '',
+                user_id: user?.id,
+                warehouse_id: user?.role?.warehouse_id,
             })
-            fetchOrder()
+            // fetchOrder()
             console.log(response)
         } catch (error) {
-            if (error.response.status === 422) {
-                setErrors(error.response.data.errors)
-            }
-            setErrors(error.response?.data?.errors || ['Something went wrong.'])
+            setErrors(error.response?.message || ['Something went wrong.'])
 
             console.log(error)
-            console.log(error.response.data.errors)
         }
     }
-    console.log(user)
+    // console.log(newOrder)
     return (
         <div>
             <form>
@@ -50,7 +54,7 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                             <label
                                 htmlFor="name"
                                 className="block mb-2 text-sm font-medium text-gray-900">
-                                Customer Name {user?.role?.warehouse_id}
+                                Customer Name
                             </label>
                             <Input
                                 type="text"
