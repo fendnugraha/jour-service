@@ -1,3 +1,4 @@
+import Button from '@/components/Button'
 import Input from '@/components/Input'
 import { useAuth } from '@/hooks/auth'
 import axios from '@/lib/axios'
@@ -39,9 +40,7 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
             fetchOrder()
             console.log(response)
         } catch (error) {
-            setErrors(error.response?.message || ['Something went wrong.'])
-
-            console.log(error)
+            setErrors(error.response?.data?.errors || ['Something went wrong.'])
         }
     }
     // console.log(newOrder)
@@ -201,11 +200,11 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                         className="outline outline-indigo-800 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-xl">
                         Cancel
                     </button> */}
-                    <button
+                    <Button
                         onClick={handleCreateOrder}
                         className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl">
                         Save
-                    </button>
+                    </Button>
                 </div>
             </form>
         </div>

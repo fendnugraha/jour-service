@@ -122,11 +122,12 @@ const Navigation = ({ user }) => {
                         </span>
                     </NavLink>
                 </ul>
-                <ul className="mt-4 text-sm border-t">
+                <hr className="my-4" />
+                <ul className="mt-4 text-sm">
                     <NavLink
                         href="/setting"
                         isOpen={isOpen}
-                        active={usePathname() === '/setting'}>
+                        active={usePathname().startsWith('/setting')}>
                         <div>
                             <Cog6ToothIcon className="w-5 h-5" />
                         </div>

@@ -299,28 +299,30 @@ export default function Account() {
                                                     )}
                                                 </td>
                                                 <td className="text-center">
-                                                    <button
-                                                        onClick={() => {
-                                                            setIsModalUpdateAccountOpen(
-                                                                true,
-                                                            )
-                                                            handleShowAccount(
-                                                                account.id,
-                                                            )
-                                                        }}
-                                                        className="text-white min-w-28 bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm py-1">
-                                                        <PencilSquareIcon className="w-5 h-5 inline" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDeleteAccount(
-                                                                account.id,
-                                                            )
-                                                        }
-                                                        className="text-white min-w-28 bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-sm text-sm py-1">
-                                                        {' '}
-                                                        <TrashIcon className="w-5 h-5 inline" />
-                                                    </button>
+                                                    <div className="flex justify-center gap-2">
+                                                        <button
+                                                            onClick={() => {
+                                                                setIsModalUpdateAccountOpen(
+                                                                    true,
+                                                                )
+                                                                handleShowAccount(
+                                                                    account.id,
+                                                                )
+                                                            }}
+                                                            className="">
+                                                            <PencilSquareIcon className="w-5 h-5 inline" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDeleteAccount(
+                                                                    account.id,
+                                                                )
+                                                            }
+                                                            className="">
+                                                            {' '}
+                                                            <TrashIcon className="w-5 h-5 inline" />
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))

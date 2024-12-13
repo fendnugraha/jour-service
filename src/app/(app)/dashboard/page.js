@@ -108,7 +108,7 @@ const Dashboard = () => {
                         />
                     </Modal>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-4 sm:grid-rows-2 gap-4 px-4 h-[400px] overflow-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-4 sm:grid-rows-2 gap-4 px-4 sm:h-[400px] overflow-auto">
                     <div className="flex flex-col p-6 items-start justify-between gap-4 shadow-sm bg-white rounded-2xl order-1">
                         <div>
                             <h1 className="text-sm">
