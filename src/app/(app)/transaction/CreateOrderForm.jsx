@@ -36,7 +36,7 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                 user_id: user?.id,
                 warehouse_id: user?.role?.warehouse_id,
             })
-            // fetchOrder()
+            fetchOrder()
             console.log(response)
         } catch (error) {
             setErrors(error.response?.message || ['Something went wrong.'])
@@ -195,9 +195,12 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                     </div>
                 </div>
                 <div className="flex justify-end gap-2                                      ">
-                    <button className="bg-indigo-300 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-xl">
+                    {/* <button
+                        type="button"
+                        onClick={onclose}
+                        className="outline outline-indigo-800 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-xl">
                         Cancel
-                    </button>
+                    </button> */}
                     <button
                         onClick={handleCreateOrder}
                         className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl">
