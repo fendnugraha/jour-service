@@ -1,17 +1,11 @@
 'use client'
 import Header from '@/app/(app)/Header'
 import Modal from '@/components/Modal'
-import {
-    ArrowRightCircleIcon,
-    CheckBadgeIcon,
-    EyeIcon,
-    PlusCircleIcon,
-    PresentationChartBarIcon,
-    ShoppingBagIcon,
-    WrenchIcon,
-} from '@heroicons/react/24/solid'
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import CreateOrderForm from '../transaction/CreateOrderForm'
 import { useEffect, useState } from 'react'
+import Notification from '@/components/notification'
+import OrderTable from './OrderTable'
 import axios from '@/lib/axios'
 
 const Dashboard = () => {
@@ -36,18 +30,6 @@ const Dashboard = () => {
     }
     const [isModalCreateOrderOpen, setIsModalCreateOrderOpen] = useState(false)
 
-    useEffect(() => {
-        if (notification || errors.length > 0) {
-            const timeoutId = setTimeout(() => {
-                setNotification('')
-                setErrors([])
-            }, 3000) // Notification disappears after 3 seconds
-
-            // Cleanup timeout on component unmount
-            return () => clearTimeout(timeoutId)
-        }
-    }, [notification, errors])
-
     const fetchOrder = async () => {
         try {
             const response = await axios.get('/api/auth/orders')
@@ -64,25 +46,14 @@ const Dashboard = () => {
     return (
         <>
             {notification && (
-                <div className="bg-teal-100 border-t-4 fixed top-5 right-5 z-[999] border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md">
-                    <div className="flex">
-                        <div className="py-1">
-                            <svg
-                                className="fill-current h-6 w-5 text-teal-500 mr-4"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p className="font-bold">{notification}</p>
-                        </div>
-                    </div>
-                </div>
+                <Notification
+                    notification={notification}
+                    onClose={() => setNotification('')}
+                />
             )}
             <div className="">
                 {/* <h1 className="text-2xl font-bold mb-4">Point of Sales - Add to Cart</h1> */}
-                <Header title={'Point of Sales - Add to Cart'} />
+                <Header title={'Dashboard'} />
                 <div className="p-4 justify-between flex">
                     <select className="border border-gray-300 bg-white rounded-lg py-2 px-4">
                         <option value="">Today</option>
@@ -108,7 +79,7 @@ const Dashboard = () => {
                         />
                     </Modal>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-4 sm:grid-rows-2 gap-4 px-4 sm:h-[400px] overflow-auto">
+                {/* <div className="grid grid-cols-1 sm:grid-cols-4 sm:grid-rows-2 gap-4 px-4 sm:h-[400px] overflow-auto">
                     <div className="flex flex-col p-6 items-start justify-between gap-4 shadow-sm bg-white rounded-2xl order-1">
                         <div>
                             <h1 className="text-sm">
@@ -221,7 +192,8 @@ const Dashboard = () => {
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> */}
+                <OrderTable orders={orders} errors={errors} />
             </div>
         </>
     )

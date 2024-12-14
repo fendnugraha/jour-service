@@ -82,7 +82,7 @@ export default function Setting() {
                                         <CubeIcon className="w-24 h-24" />
                                     </h1>
                                     <Link
-                                        href="/"
+                                        href="/setting/product"
                                         className="sm:absolute hover:underline hover:font-bold bottom-4 right-5 text-sm rounded-full">
                                         Product{' '}
                                         <span className="hidden sm:inline">

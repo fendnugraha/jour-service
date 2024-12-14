@@ -19,7 +19,7 @@
 
     .table th,
     .table td {
-        @apply px-6 py-2 whitespace-nowrap border-b;
+        @apply px-6 py-2 whitespace-nowrap border-b text-sm;
     }
 
     .table th {
