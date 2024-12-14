@@ -4,11 +4,19 @@ import Header from '../../Header'
 import axios from '@/lib/axios'
 import Paginator from '@/components/Paginator'
 import Input from '@/components/Input'
-
+import formatNumber from '@/lib/formatNumber'
+import CreateProduct from './CreateProduct'
+import Modal from '@/components/Modal'
 const Products = () => {
     const [products, setProducts] = useState([])
     const [selectedProduct, setSelectedProduct] = useState([])
     const [errors, setErrors] = useState([])
+    const [isModalCreateProductOpen, setIsModalCreateProductOpen] =
+        useState(false)
+
+    const closeModal = () => {
+        setIsModalCreateProductOpen(false)
+    }
 
     const handleSelectProduct = id => {
         setSelectedProduct(prevSelected => {
@@ -32,10 +40,6 @@ const Products = () => {
         fetchProducts()
     }, [])
 
-    useEffect(() => {
-        // console.log(selectedProduct)
-    }, [selectedProduct])
-
     const handleChangePage = url => {
         fetchProducts(url)
     }
@@ -46,10 +50,44 @@ const Products = () => {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4">
+                        <div>
+                            <button
+                                onClick={() =>
+                                    setIsModalCreateProductOpen(true)
+                                }
+                                className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-xl flex">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="w-6 h-6"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                    />
+                                </svg>
+                                Add Product
+                            </button>
+                            <Modal
+                                isOpen={isModalCreateProductOpen}
+                                onClose={closeModal}
+                                modalTitle="Create Product">
+                                <CreateProduct
+                                    isModalOpen={setIsModalCreateProductOpen}
+                                    notification={message =>
+                                        setNotification(message)
+                                    }
+                                    fetchProducts={fetchProducts}
+                                />
+                            </Modal>
+                        </div>
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th className="text-center">#</th>
                                     <th>Product</th>
                                     <th>Category</th>
                                     <th>Price</th>
@@ -60,12 +98,12 @@ const Products = () => {
                             <tbody>
                                 {products?.data?.length === 0 ? (
                                     <tr>
-                                        <td colSpan="5">No products found</td>
+                                        <td colSpan="6">No products found</td>
                                     </tr>
                                 ) : (
                                     products?.data?.map(product => (
                                         <tr key={product.id}>
-                                            <td>
+                                            <td className="text-center">
                                                 <Input
                                                     checked={selectedProduct.includes(
                                                         product.id,
@@ -80,8 +118,10 @@ const Products = () => {
                                             </td>
                                             <td>{product.name}</td>
                                             <td>{product.category}</td>
-                                            <td>{product.price}</td>
-                                            <td>{product.stock}</td>
+                                            <td>
+                                                {formatNumber(product.price)}
+                                            </td>
+                                            <td>{product.end_stock}</td>
                                             <td>
                                                 <button className="btn-primary mr-2">
                                                     Edit

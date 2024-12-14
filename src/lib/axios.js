@@ -5,6 +5,7 @@ const axios = Axios.create({
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
         Accept: 'application/json',
+        'Content-Type': 'application/json',
     },
     withCredentials: true,
     withXSRFToken: true,
