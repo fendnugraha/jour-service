@@ -31,7 +31,6 @@ const CreateProduct = ({ isModalOpen, notification, fetchProducts }) => {
         try {
             const response = await axios.post('/api/auth/products', newProduct)
             notification(response.data.message)
-            console.log(response.data)
             if (response.status === 201) {
                 // Reset form fields and close modal on success
                 setNewProduct({
