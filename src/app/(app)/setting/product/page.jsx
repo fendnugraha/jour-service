@@ -149,25 +149,26 @@ export default function Product() {
                                         Hapus terpilih {selectedAccount.length}
                                     </button>
                                 )} */}
-                                <button
-                                    className="btn-primary"
-                                    onClick={() =>
-                                        setIsModalCreateProductOpen(true)
-                                    }>
-                                    Tambah Produk{' '}
-                                    <PlusCircleIcon className="w-5 h-5 inline" />
-                                </button>
-                                <button
-                                    className="btn-primary"
-                                    onClick={() =>
-                                        setIsModalCreateCategoryProductOpen(
-                                            true,
-                                        )
-                                    }>
-                                    Tambah Kategori{' '}
-                                    <PlusCircleIcon className="w-5 h-5 inline" />
-                                </button>
-
+                                <div className="flex justify-end gap-2">
+                                    <button
+                                        className="btn-primary"
+                                        onClick={() =>
+                                            setIsModalCreateProductOpen(true)
+                                        }>
+                                        Tambah Produk{' '}
+                                        <PlusCircleIcon className="w-5 h-5 inline" />
+                                    </button>
+                                    <button
+                                        className="btn-primary"
+                                        onClick={() =>
+                                            setIsModalCreateCategoryProductOpen(
+                                                true,
+                                            )
+                                        }>
+                                        Tambah Kategori{' '}
+                                        <PlusCircleIcon className="w-5 h-5 inline" />
+                                    </button>
+                                </div>
                                 <Modal
                                     isOpen={isModalCreateProductOpen}
                                     onClose={closeModal}
@@ -196,58 +197,6 @@ export default function Product() {
                                         fetchProducts={fetchProducts}
                                     />
                                 </Modal>
-                                {/* {selectedUpdateAccount && (
-                                    <Modal
-                                        isOpen={isModalUpdateAccountOpen}
-                                        onClose={closeModal}
-                                        modalTitle="Update account">
-                                        <div className="mb-4">
-                                            <label
-                                                htmlFor="name"
-                                                className="block mb-2 text-sm font-medium text-gray-900">
-                                                Account Name
-                                            </label>
-                                            <Input
-                                                type="text"
-                                                id="name"
-                                                defaultValue={
-                                                    selectedUpdateAccount.acc_name
-                                                }
-                                                onChange={event =>
-                                                    setSelectedUpdateAccount({
-                                                        ...selectedUpdateAccount,
-                                                        acc_name:
-                                                            event.target.value,
-                                                    })
-                                                }
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                placeholder="John Doe"
-                                            />
-                                        </div>
-                                        <div className="mb-4">
-                                            <label
-                                                htmlFor="st_balance"
-                                                className="block mb-2 text-sm font-medium text-gray-900">
-                                                Starting Balance
-                                            </label>
-                                            <Input
-                                                type="number"
-                                                defaultValue={
-                                                    selectedUpdateAccount.st_balance
-                                                }
-                                                onChange={event =>
-                                                    setSelectedUpdateAccount({
-                                                        ...selectedUpdateAccount,
-                                                        st_balance:
-                                                            event.target.value,
-                                                    })
-                                                }
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                placeholder="0"
-                                            />
-                                        </div>
-                                    </Modal>
-                                )} */}
                             </div>
                             <table className="table">
                                 <thead>
@@ -257,7 +206,7 @@ export default function Product() {
                                         <th>Category</th>
                                         <th>Price</th>
                                         <th>Stock</th>
-                                        <th>Actions</th>
+                                        <th className="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -291,7 +240,7 @@ export default function Product() {
                                                     )}
                                                 </td>
                                                 <td>{product.end_stock}</td>
-                                                <td>
+                                                <td className="flex justify-center">
                                                     <button className="btn-primary mr-2">
                                                         Edit
                                                     </button>

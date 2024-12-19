@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 
 const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
     const { user } = useAuth({ middleware: 'auth' })
-    const [warehouse, setWarehouse] = useState(null)
     const [errors, setErrors] = useState([]) // Store validation errors
     const [newOrder, setNewOrder] = useState({
         customer_name: '',
@@ -17,10 +16,6 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
         warehouse_id: user.role.warehouse_id,
         user_id: user.id,
     })
-
-    // useEffect(() => {
-    //     setWarehouse(user?.role?.warehouse_id)
-    // }, [newOrder])
 
     const handleCreateOrder = async e => {
         e.preventDefault()
@@ -38,7 +33,6 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                 warehouse_id: user?.role?.warehouse_id,
             })
             fetchOrder()
-            console.log(response)
         } catch (error) {
             setErrors(error.response?.data?.errors || ['Something went wrong.'])
         }

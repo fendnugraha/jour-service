@@ -5,8 +5,11 @@ import Modal from '@/components/Modal'
 import CreateOrderForm from './CreateOrderForm'
 import Notification from '@/components/notification'
 import { useEffect, useState } from 'react'
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
+import axios from '@/lib/axios'
 
 const Transaction = ({ user }) => {
+    const [orders, setOrders] = useState([])
     const [notification, setNotification] = useState('')
     const [errors, setErrors] = useState([])
     const closeModal = () => {
@@ -14,49 +17,39 @@ const Transaction = ({ user }) => {
     }
     const [isModalCreateOrderOpen, setIsModalCreateOrderOpen] = useState(false)
 
-    useEffect(() => {
-        if (notification || errors.length > 0) {
-            const timeoutId = setTimeout(() => {
-                setNotification('')
-                setErrors([])
-            }, 3000) // Notification disappears after 3 seconds
-
-            // Cleanup timeout on component unmount
-            return () => clearTimeout(timeoutId)
+    const fetchOrder = async () => {
+        try {
+            const response = await axios.get('/api/auth/orders')
+            setOrders(response.data.data)
+        } catch (error) {
+            setErrors(error.response?.data?.errors || ['Something went wrong.'])
         }
-    }, [notification, errors])
+    }
 
+    useEffect(() => {
+        fetchOrder()
+    }, [])
     return (
         <>
             <Header title="Transaction" />
             <div className="py-12">
                 {notification && (
-                    <div className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md">
-                        <div className="flex">
-                            <div className="py-1">
-                                <svg
-                                    className="fill-current h-6 w-5 text-teal-500 mr-4"
-                                    viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <p className="font-bold">{notification}</p>
-                            </div>
-                        </div>
-                    </div>
+                    <Notification
+                        notification={notification}
+                        onClose={() => setNotification('')}
+                    />
                 )}
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
-                            <div>
+                        <div className="p-6 bg-white">
+                            <div className="flex justify-between mb-3">
                                 <button
                                     className="btn btn-primary mr-4"
                                     onClick={() =>
                                         setIsModalCreateOrderOpen(true)
                                     }>
-                                    Create new order
+                                    <PlusCircleIcon className="w-6 h-6 inline" />{' '}
+                                    New order
                                 </button>
                                 <Modal
                                     isOpen={isModalCreateOrderOpen}
@@ -67,37 +60,55 @@ const Transaction = ({ user }) => {
                                         notification={message => {
                                             setNotification(message)
                                         }}
+                                        fetchOrder={fetchOrder}
                                     />
                                 </Modal>
-                                <Link
-                                    href="/transaction/sales"
-                                    className="btn btn-primary">
-                                    Add New Sales
-                                </Link>
-                                <Link
-                                    href="/transaction/purchase"
-                                    className="btn btn-primary ml-4">
-                                    Add New Purchase
-                                </Link>
+                                <div className="flex justify-end gap-2">
+                                    <Link
+                                        href="/transaction/sales"
+                                        className="bg-green-500 py-2 px-6 rounded-lg text-white">
+                                        <PlusCircleIcon className="w-6 h-6 inline" />{' '}
+                                        New Sales
+                                    </Link>
+                                    <Link
+                                        href="/transaction/purchase"
+                                        className="bg-green-500 py-2 px-6 rounded-lg text-white ml-2">
+                                        <PlusCircleIcon className="w-6 h-6 inline" />{' '}
+                                        New Purchase
+                                    </Link>
+                                </div>
                             </div>
                             <table className="table">
                                 <thead>
-                                    <tr className="">
-                                        <th className="text-start p-4">
-                                            Customer / Supplier
-                                        </th>
-                                        <th>Amount</th>
+                                    <tr>
+                                        <th>Order Number</th>
+                                        <th>Phone Type</th>
+                                        <th>Customer Name</th>
+                                        <th>Description</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="">
-                                        <td className="text-start p-4">
-                                            Customer / Supplier
-                                        </td>
-                                        <td>Amount</td>
-                                        <td>Action</td>
-                                    </tr>
+                                    {orders?.length > 0 ? (
+                                        orders.map(order => (
+                                            <tr key={order.id}>
+                                                <td>{order.order_number}</td>
+                                                <td>{order.phone_type}</td>
+                                                <td>{order.customer_name}</td>
+                                                <td>{order.description}</td>
+                                                <td>
+                                                    <Link
+                                                        href={`/transaction/${order.id}`}>
+                                                        View
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5">No data</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
