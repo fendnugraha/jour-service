@@ -6,11 +6,35 @@ import axios from '@/lib/axios'
 import Link from 'next/link'
 import { ArrowLeftCircleIcon, PlusCircleIcon } from '@heroicons/react/24/solid'
 import formatDateTime from '@/lib/formatDateTime'
+import Timeline from '@/components/Timeline'
 
 const OrderDetail = ({ params }) => {
     const [notification, setNotification] = useState('')
     const [order, setOrder] = useState(null) // Default null untuk data tunggal
     const [errors, setErrors] = useState([])
+
+    const handleChangeStatusOrder = async e => {
+        e.preventDefault()
+
+        try {
+            const response = await axios.put(
+                `/api/auth/orders/${id}`,
+                { status: e.target.value },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+            )
+            setNotification(response.data.message)
+            fetchOrderById()
+        } catch (error) {
+            const errorMsg = error.response?.data?.errors || [
+                'Something went wrong.',
+            ]
+            setErrors(errorMsg)
+        }
+    }
 
     const { id } = params
 
@@ -42,6 +66,25 @@ const OrderDetail = ({ params }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white">
+                            <div className="flex justify-between gap-2 mb-5">
+                                <h1 className="text-xl font-bold">
+                                    Order details
+                                </h1>
+                                <select
+                                    value={order?.status}
+                                    onChange={handleChangeStatusOrder}
+                                    className="px-3 py-1 border rounded">
+                                    <option value="Pending">Pending</option>
+                                    <option value="Diagnosing">
+                                        Diagnosing
+                                    </option>
+                                    <option value="Repairing">Repairing</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <div>
+                                <Timeline status={order?.status} />
+                            </div>
                             {errors.length > 0 ? (
                                 <div className="text-red-500">
                                     {errors.map((error, index) => (
@@ -50,14 +93,6 @@ const OrderDetail = ({ params }) => {
                                 </div>
                             ) : order ? (
                                 <div>
-                                    <div className="flex justify-between gap-2 mb-5">
-                                        <h1 className="text-xl font-bold">
-                                            Order details
-                                        </h1>
-                                        <h1 className="px-3 py-1 bg-yellow-300 rounded-xl">
-                                            {order?.status}
-                                        </h1>
-                                    </div>
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
                                             <table className="w-full text-sm">

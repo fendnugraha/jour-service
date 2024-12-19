@@ -6,6 +6,7 @@ import {
     ShoppingBagIcon,
     WrenchIcon,
 } from '@heroicons/react/24/solid'
+import Link from 'next/link'
 
 const OrderTable = ({ orders, errors }) => {
     function formatDate(dateString) {
@@ -86,9 +87,9 @@ const OrderTable = ({ orders, errors }) => {
                                     </span>
                                 </td>
                                 <td className="text-center">
-                                    <button>
+                                    <Link href={`/transaction/${order.id}`}>
                                         <EyeIcon className="w-6 h-6 text-gray-700" />
-                                    </button>
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
