@@ -117,7 +117,7 @@ export default function Product() {
     //     handleShowAccount()
     // }, [])
     const handleChangePage = url => {
-        fetchAccount(url)
+        fetchProducts(url)
     }
     return (
         <>
@@ -253,7 +253,7 @@ export default function Product() {
                                     )}
                                 </tbody>
                             </table>
-                            {product?.next_page_url !== null && (
+                            {product?.links && (
                                 <Paginator
                                     links={product}
                                     handleChangePage={handleChangePage}

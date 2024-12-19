@@ -55,7 +55,7 @@ const Timeline = ({ status }) => {
                                 {/* Connecting Line */}
                                 {!isLastStep && (
                                     <div
-                                        className={`absolute top-5 left-10 w-10 h-1 ${
+                                        className={`absolute top-5 left-10 w-16 h-1 ${
                                             currentStep > step.id
                                                 ? `bg-${steps[index + 1].color}`
                                                 : 'bg-gray-300'
