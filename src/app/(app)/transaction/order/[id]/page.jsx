@@ -11,6 +11,7 @@ import {
     TrashIcon,
 } from '@heroicons/react/24/solid'
 import Input from '@/components/Input'
+import formatNumber from '@/lib/formatNumber'
 
 const useDebounce = (value, delay) => {
     const [debouncedValue, setDebouncedValue] = useState(value)
@@ -37,6 +38,7 @@ const SparepartCart = ({ params }) => {
     const debouncedSearch = useDebounce(search, 500) // Apply debounce with 500ms delay
     const [isProductListOpen, setIsProductListOpen] = useState(false)
     const dropdownRef = useRef(null)
+    const [cart, setCart] = useState([])
 
     const handleClickOutside = event => {
         if (
@@ -97,6 +99,103 @@ const SparepartCart = ({ params }) => {
     useEffect(() => {
         fetchOrderById()
     }, [id]) // Pastikan `id` ada sebagai dependensi
+
+    //Cart Area
+
+    const handleAddToCart = async product => {
+        setCart(prevCart => {
+            const existingItem = prevCart.find(item => item.id === product.id)
+            if (existingItem) {
+                return prevCart.map(item => {
+                    if (item.id === product.id) {
+                        return {
+                            ...item,
+                            quantity: item.quantity + 1,
+                        }
+                    }
+                    return item
+                })
+            } else {
+                return [
+                    ...prevCart,
+                    { ...product, quantity: 1, order_id: order?.id },
+                ]
+            }
+        })
+    }
+
+    const handleRemoveFromCart = product => {
+        setCart(prevCart => {
+            return prevCart.filter(item => item.id !== product.id)
+        })
+    }
+
+    const handleClearCart = () => {
+        setCart([])
+    }
+
+    const handleIncrementQuantity = product => {
+        setCart(prevCart => {
+            return prevCart.map(item => {
+                if (item.id === product.id) {
+                    return {
+                        ...item,
+                        quantity: item.quantity + 1,
+                    }
+                }
+                return item
+            })
+        })
+    }
+
+    const handleDecrementQuantity = product => {
+        // Prevent decrementing quantity below 1
+        if (product.quantity === 1) {
+            handleRemoveFromCart(product)
+            return
+        }
+        setCart(prevCart => {
+            return prevCart.map(item => {
+                if (item.id === product.id) {
+                    if (item.quantity === 1) {
+                        return {
+                            ...item,
+                            quantity: 1,
+                        }
+                    }
+                    return {
+                        ...item,
+                        quantity: item.quantity - 1,
+                    }
+                }
+                return item
+            })
+        })
+    }
+
+    // handle update price
+    const handlePriceChange = (product, newPrice) => {
+        setCart(prevCart => {
+            return prevCart.map(item => {
+                if (item.id === product.id) {
+                    return {
+                        ...item,
+                        price: newPrice,
+                    }
+                }
+                return item
+            })
+        })
+    }
+
+    const calculateTotalPrice = () => {
+        return cart.reduce(
+            (total, item) => total + item.price * item.quantity,
+            0,
+        )
+    }
+
+    // End Cart Area
     return (
         <>
             <Header title="Order - Add Spareparts" />
@@ -110,7 +209,14 @@ const SparepartCart = ({ params }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white">
-                            <div className="relative" ref={dropdownRef}>
+                            <h1 className="text-xl">
+                                <span className="font-bold">
+                                    {' '}
+                                    Order Number:
+                                </span>{' '}
+                                {order?.order_number}
+                            </h1>
+                            <div className="relative mt-4" ref={dropdownRef}>
                                 <Input
                                     type="search"
                                     onChange={handleSearch}
@@ -118,19 +224,32 @@ const SparepartCart = ({ params }) => {
                                     placeholder="Cari products.."
                                     className={`w-1/2`}
                                 />
+                                <button
+                                    onClick={handleClearCart}
+                                    className="bg-red-500 text-white px-4 py-2 rounded-lg ml-2">
+                                    Clear Cart
+                                </button>
                                 {isProductListOpen && (
                                     <div
                                         className={`absolute top-12 left-0 w-1/2 bg-white shadow-md border rounded-xl`}>
                                         {products?.data?.length > 0 ? (
                                             products?.data?.map(p => (
-                                                <div className="flex justify-between p-2 items-center shadow-sm">
+                                                <div
+                                                    className="flex justify-between p-2 items-center shadow-sm"
+                                                    key={p.id}>
                                                     <h2>{p.name}</h2>
-                                                    <PlusCircleIcon className="size-8" />
+                                                    <button
+                                                        onClick={() => {
+                                                            handleAddToCart(p)
+                                                        }}
+                                                        className="text-blue-500">
+                                                        <PlusCircleIcon className="size-8" />
+                                                    </button>
                                                 </div>
                                             ))
                                         ) : (
                                             <div className="flex justify-between p-2 items-center shadow-sm">
-                                                <h2>Type to search</h2>
+                                                <h2>Loading ...</h2>
                                             </div>
                                         )}
                                     </div>
@@ -143,38 +262,95 @@ const SparepartCart = ({ params }) => {
                                         <th>Name Sparepart</th>
                                         <th>Qty</th>
                                         <th>Harga</th>
-                                        <th>Subtotal</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td className="w-1/2">Parts 1</td>
-                                        <td>
-                                            <div className="flex items-center justify-center gap-4">
-                                                <button>
-                                                    <MinusCircleIcon className="size-6 inline text-blue-500" />
-                                                </button>
-                                                1
-                                                <button>
-                                                    <PlusCircleIcon className="size-6 inline text-blue-500" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <Input
-                                                type="number"
-                                                value="200.000"
-                                            />
-                                        </td>
-                                        <td>100.200.000</td>
-                                        <td>
-                                            <button>
-                                                <TrashIcon className="size-6 inline text-red-600" />
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    {cart.length > 0 ? (
+                                        cart.map(item => (
+                                            <tr
+                                                key={item.id}
+                                                className="text-sm">
+                                                <td className="w-1/2">
+                                                    {item.name}
+                                                </td>
+                                                <td>
+                                                    <div className="flex items-center justify-center gap-4">
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDecrementQuantity(
+                                                                    item,
+                                                                )
+                                                            }>
+                                                            <MinusCircleIcon className="size-6 inline text-blue-500" />
+                                                        </button>
+                                                        <span>
+                                                            {item.quantity}
+                                                        </span>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleIncrementQuantity(
+                                                                    item,
+                                                                )
+                                                            }>
+                                                            <PlusCircleIcon className="size-6 inline text-blue-500" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <Input
+                                                        type="text"
+                                                        className={
+                                                            'text-xs text-end'
+                                                        }
+                                                        value={item.price}
+                                                        onChange={e =>
+                                                            handlePriceChange(
+                                                                item,
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                    />
+                                                    <span className="text-xs font-bold text-blue-600 block text-end">
+                                                        Subtotal:{' '}
+                                                        {formatNumber(
+                                                            item.quantity *
+                                                                item.price,
+                                                        )}
+                                                    </span>
+                                                </td>
+                                                <td className="text-center">
+                                                    <button
+                                                        onClick={() =>
+                                                            handleRemoveFromCart(
+                                                                item,
+                                                            )
+                                                        }>
+                                                        <TrashIcon className="size-6 inline text-red-600" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4">
+                                                No items in cart
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th className="" colSpan="3">
+                                            Total:
+                                        </th>
+                                        <th>
+                                            {formatNumber(
+                                                calculateTotalPrice(),
+                                            )}
+                                        </th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
