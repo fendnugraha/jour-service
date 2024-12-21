@@ -5,8 +5,10 @@ import Modal from '@/components/Modal'
 import CreateOrderForm from './CreateOrderForm'
 import Notification from '@/components/notification'
 import { useEffect, useState } from 'react'
-import { PlusCircleIcon } from '@heroicons/react/24/solid'
+import { PlusCircleIcon, ShoppingCartIcon } from '@heroicons/react/24/solid'
 import axios from '@/lib/axios'
+import formatDateTime from '@/lib/formatDateTime'
+import TimeAgo from '@/lib/formatDateDistance'
 
 const Transaction = ({ user }) => {
     const [orders, setOrders] = useState([])
@@ -84,7 +86,7 @@ const Transaction = ({ user }) => {
                                         <th>Order Number</th>
                                         <th>Phone Type</th>
                                         <th>Customer Name</th>
-                                        <th>Description</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -92,13 +94,34 @@ const Transaction = ({ user }) => {
                                     {orders?.length > 0 ? (
                                         orders.map(order => (
                                             <tr key={order.id}>
-                                                <td>{order.order_number}</td>
+                                                <td>
+                                                    <span className="text-xs block text-slate-500">
+                                                        {formatDateTime(
+                                                            order.created_at,
+                                                        )}
+                                                    </span>
+                                                    {order.order_number}
+                                                    <span className="text-xs block">
+                                                        {TimeAgo({
+                                                            timestamp:
+                                                                order.created_at,
+                                                        })}
+                                                    </span>
+                                                </td>
                                                 <td>{order.phone_type}</td>
                                                 <td>{order.customer_name}</td>
-                                                <td>{order.description}</td>
+                                                <td>
+                                                    {order.status}
+                                                    <span className="text-xs block">
+                                                        @{' '}
+                                                        {formatDateTime(
+                                                            order.updated_at,
+                                                        )}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     <Link
-                                                        href={`/transaction/${order.id}`}>
+                                                        href={`/transaction/detail/${order.id}`}>
                                                         View
                                                     </Link>
                                                 </td>

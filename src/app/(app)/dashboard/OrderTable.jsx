@@ -87,7 +87,8 @@ const OrderTable = ({ orders, errors }) => {
                                     </span>
                                 </td>
                                 <td className="text-center">
-                                    <Link href={`/transaction/${order.id}`}>
+                                    <Link
+                                        href={`/transaction/detail/${order.id}`}>
                                         <EyeIcon className="w-6 h-6 text-gray-700" />
                                     </Link>
                                 </td>
