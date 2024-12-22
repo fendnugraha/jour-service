@@ -9,6 +9,7 @@ import {
     MinusCircleIcon,
     PlusCircleIcon,
     TrashIcon,
+    XCircleIcon,
 } from '@heroicons/react/24/solid'
 import Input from '@/components/Input'
 import formatNumber from '@/lib/formatNumber'
@@ -35,6 +36,8 @@ const SparepartCart = ({ params }) => {
     const [errors, setErrors] = useState([])
     const [products, setProducts] = useState([])
     const [search, setSearch] = useState('')
+    const [serviceFee, setServiceFee] = useState(0)
+    const [discount, setDiscount] = useState(0)
     const debouncedSearch = useDebounce(search, 500) // Apply debounce with 500ms delay
     const [isProductListOpen, setIsProductListOpen] = useState(false)
     const dropdownRef = useRef(null)
@@ -105,94 +108,118 @@ const SparepartCart = ({ params }) => {
     const handleAddToCart = async product => {
         setCart(prevCart => {
             const existingItem = prevCart.find(item => item.id === product.id)
+            let updatedCart
+
             if (existingItem) {
-                return prevCart.map(item => {
-                    if (item.id === product.id) {
-                        return {
-                            ...item,
-                            quantity: item.quantity + 1,
-                        }
-                    }
-                    return item
-                })
+                updatedCart = prevCart.map(item =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item,
+                )
             } else {
-                return [
+                updatedCart = [
                     ...prevCart,
                     { ...product, quantity: 1, order_id: order?.id },
                 ]
             }
+
+            // Update localStorage with the new cart
+            localStorage.setItem('cart', JSON.stringify(updatedCart))
+            return updatedCart
         })
     }
 
     const handleRemoveFromCart = product => {
         setCart(prevCart => {
-            return prevCart.filter(item => item.id !== product.id)
+            const updatedCart = prevCart.filter(item => item.id !== product.id)
+
+            // Update localStorage with the new cart
+            localStorage.setItem('cart', JSON.stringify(updatedCart))
+
+            return updatedCart
         })
     }
 
     const handleClearCart = () => {
         setCart([])
+        localStorage.setItem('cart', JSON.stringify([])) // Clear cart in localStorage
     }
 
     const handleIncrementQuantity = product => {
         setCart(prevCart => {
-            return prevCart.map(item => {
-                if (item.id === product.id) {
-                    return {
-                        ...item,
-                        quantity: item.quantity + 1,
-                    }
-                }
-                return item
-            })
+            const updatedCart = prevCart.map(item =>
+                item.id === product.id
+                    ? { ...item, quantity: item.quantity + 1 }
+                    : item,
+            )
+            localStorage.setItem('cart', JSON.stringify(updatedCart)) // Sync with localStorage
+            return updatedCart
         })
     }
 
     const handleDecrementQuantity = product => {
-        // Prevent decrementing quantity below 1
         if (product.quantity === 1) {
-            handleRemoveFromCart(product)
+            handleRemoveFromCart(product) // Use the remove function if quantity is 1
             return
         }
         setCart(prevCart => {
-            return prevCart.map(item => {
-                if (item.id === product.id) {
-                    if (item.quantity === 1) {
-                        return {
-                            ...item,
-                            quantity: 1,
-                        }
-                    }
-                    return {
-                        ...item,
-                        quantity: item.quantity - 1,
-                    }
-                }
-                return item
-            })
+            const updatedCart = prevCart.map(item =>
+                item.id === product.id
+                    ? { ...item, quantity: item.quantity - 1 }
+                    : item,
+            )
+            localStorage.setItem('cart', JSON.stringify(updatedCart)) // Sync with localStorage
+            return updatedCart
         })
     }
 
-    // handle update price
     const handlePriceChange = (product, newPrice) => {
         setCart(prevCart => {
-            return prevCart.map(item => {
-                if (item.id === product.id) {
-                    return {
-                        ...item,
-                        price: newPrice,
-                    }
-                }
-                return item
-            })
+            const updatedCart = prevCart.map(item =>
+                item.id === product.id ? { ...item, price: newPrice } : item,
+            )
+            localStorage.setItem('cart', JSON.stringify(updatedCart)) // Sync with localStorage
+            return updatedCart
         })
     }
 
     const calculateTotalPrice = () => {
-        return cart.reduce(
+        const cartTotal = cart.reduce(
             (total, item) => total + item.price * item.quantity,
             0,
         )
+
+        // Ensure serviceFee and discount are numbers
+        const total = Number(cartTotal) + Number(serviceFee) - Number(discount)
+
+        return total
+    }
+
+    useEffect(() => {
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || []
+        setCart(storedCart)
+    }, [])
+
+    const handleCheckout = async () => {
+        try {
+            const response = await axios.post('/api/auth/transactions', {
+                cart,
+                serviceFee: serviceFee,
+                discount: discount,
+                transaction_type: 'Sales',
+                total: calculateTotalPrice(),
+                order_id: order?.id,
+            })
+            setNotification(response.data.message)
+            handleClearCart()
+            setServiceFee(0)
+            setDiscount(0)
+        } catch (error) {
+            const errorMsg = error.response?.data?.errors || [
+                'Something went wrong.',
+            ]
+            setErrors(errorMsg)
+        }
     }
 
     // End Cart Area
@@ -224,14 +251,24 @@ const SparepartCart = ({ params }) => {
                                     placeholder="Cari products.."
                                     className={`w-1/2`}
                                 />
-                                <button
-                                    onClick={handleClearCart}
-                                    className="bg-red-500 text-white px-4 py-2 rounded-lg ml-2">
-                                    Clear Cart
-                                </button>
+                                {calculateTotalPrice() !== 0 && (
+                                    <button
+                                        onClick={handleCheckout}
+                                        className="bg-indigo-500 hover:bg-indigo-400 text-white px-4 py-2 rounded-lg ml-2">
+                                        Checkout
+                                    </button>
+                                )}
+                                {cart.length > 0 && (
+                                    <button
+                                        onClick={handleClearCart}
+                                        className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg ml-2">
+                                        Clear Cart
+                                    </button>
+                                )}
+
                                 {isProductListOpen && (
                                     <div
-                                        className={`absolute top-12 left-0 w-1/2 bg-white shadow-md border rounded-xl`}>
+                                        className={`absolute top-12 left-0 w-1/2 bg-white shadow-md border rounded-xl z-10`}>
                                         {products?.data?.length > 0 ? (
                                             products?.data?.map(p => (
                                                 <div
@@ -259,10 +296,23 @@ const SparepartCart = ({ params }) => {
                             <table className="table mt-4">
                                 <thead>
                                     <tr>
+                                        <th className="">
+                                            <button
+                                                onClick={() =>
+                                                    handleClearCart()
+                                                }
+                                                disabled={cart.length === 0} // Proper dynamic disabled attribute
+                                                className={`inline-flex items-center ${
+                                                    cart.length === 0
+                                                        ? 'opacity-50 cursor-not-allowed'
+                                                        : ''
+                                                }`}>
+                                                <TrashIcon className="w-6 h-6 text-red-600" />
+                                            </button>
+                                        </th>
                                         <th>Name Sparepart</th>
                                         <th>Qty</th>
                                         <th>Harga</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -271,6 +321,16 @@ const SparepartCart = ({ params }) => {
                                             <tr
                                                 key={item.id}
                                                 className="text-sm">
+                                                <td className="text-center">
+                                                    <button
+                                                        onClick={() =>
+                                                            handleRemoveFromCart(
+                                                                item,
+                                                            )
+                                                        }>
+                                                        <XCircleIcon className="size-5 inline text-red-600" />
+                                                    </button>
+                                                </td>
                                                 <td className="w-1/2">
                                                     {item.name}
                                                 </td>
@@ -282,7 +342,7 @@ const SparepartCart = ({ params }) => {
                                                                     item,
                                                                 )
                                                             }>
-                                                            <MinusCircleIcon className="size-6 inline text-blue-500" />
+                                                            <MinusCircleIcon className="size-6 inline text-blue-500 active:text-yellow-300" />
                                                         </button>
                                                         <span>
                                                             {item.quantity}
@@ -293,11 +353,11 @@ const SparepartCart = ({ params }) => {
                                                                     item,
                                                                 )
                                                             }>
-                                                            <PlusCircleIcon className="size-6 inline text-blue-500" />
+                                                            <PlusCircleIcon className="size-6 inline text-blue-500 active:text-yellow-300" />
                                                         </button>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td className="text-end">
                                                     <Input
                                                         type="text"
                                                         className={
@@ -319,32 +379,57 @@ const SparepartCart = ({ params }) => {
                                                         )}
                                                     </span>
                                                 </td>
-                                                <td className="text-center">
-                                                    <button
-                                                        onClick={() =>
-                                                            handleRemoveFromCart(
-                                                                item,
-                                                            )
-                                                        }>
-                                                        <TrashIcon className="size-6 inline text-red-600" />
-                                                    </button>
-                                                </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
                                             <td colSpan="4">
-                                                No items in cart
+                                                Tidak ada pergantian parts
                                             </td>
                                         </tr>
                                     )}
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>Biaya Jasa Service (Rp.)</td>
+                                        <td className="text-end">
+                                            <Input
+                                                type="text"
+                                                className="text-end text-xs"
+                                                value={serviceFee}
+                                                onChange={e => {
+                                                    setServiceFee(
+                                                        e.target.value,
+                                                    )
+                                                }}
+                                                placeholder="Jasa Service (Rp.)"
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>Diskon (Rp.)</td>
+                                        <td className="text-end">
+                                            <Input
+                                                type="text"
+                                                className="text-end text-red-500 text-xs"
+                                                value={discount}
+                                                onChange={e => {
+                                                    setDiscount(e.target.value)
+                                                }}
+                                                placeholder="Diskon (Rp.)"
+                                            />
+                                        </td>
+                                    </tr>
                                 </tbody>
                                 <tfoot>
-                                    <tr>
-                                        <th className="" colSpan="3">
-                                            Total:
-                                        </th>
-                                        <th>
+                                    <tr className="text-xl">
+                                        <th></th>
+                                        <th></th>
+                                        <th className="text-left">Total:</th>
+                                        <th className="text-end text-xl">
+                                            Rp.{' '}
                                             {formatNumber(
                                                 calculateTotalPrice(),
                                             )}

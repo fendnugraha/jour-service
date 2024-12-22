@@ -91,8 +91,8 @@ const Transaction = ({ user }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {orders?.length > 0 ? (
-                                        orders.map(order => (
+                                    {orders?.data?.length > 0 ? (
+                                        orders?.data?.map(order => (
                                             <tr key={order.id}>
                                                 <td>
                                                     <span className="text-xs block text-slate-500">

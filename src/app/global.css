@@ -23,7 +23,7 @@
     }
 
     .table th {
-        @apply py-4 text-left text-gray-700 border-b-2 border-gray-200;
+        @apply py-4 text-gray-700 border-b-2 border-gray-200;
     }
 
     .table td {

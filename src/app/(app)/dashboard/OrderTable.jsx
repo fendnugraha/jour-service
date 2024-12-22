@@ -72,7 +72,7 @@ const OrderTable = ({ orders, errors }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.map(order => (
+                        {orders?.data?.map(order => (
                             <tr className="border-b" key={order.id}>
                                 <td className="p-2">
                                     <span className="text-xs block text-gray-500">
