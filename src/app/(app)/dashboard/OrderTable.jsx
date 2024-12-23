@@ -1,3 +1,4 @@
+import formatDateTime from '@/lib/formatDateTime'
 import {
     ArrowRightCircleIcon,
     CheckBadgeIcon,
@@ -9,19 +10,6 @@ import {
 import Link from 'next/link'
 
 const OrderTable = ({ orders, errors }) => {
-    function formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true, // Use 12-hour format; set to false for 24-hour format
-            timeZone: 'Asia/Jakarta',
-        })
-    }
-
     return (
         <div className="grid grid-cols-1 sm:grid-cols-4 sm:grid-rows-2 gap-4 px-4 sm:h-[400px] overflow-auto">
             <div className="flex flex-col p-6 items-start justify-between gap-4 shadow-sm bg-white rounded-2xl order-1">
@@ -51,7 +39,9 @@ const OrderTable = ({ orders, errors }) => {
                 </div>
                 <div>
                     <span>Orders</span>
-                    <h1 className="text-3xl font-bold">{orders.length}</h1>
+                    <h1 className="text-3xl font-bold">
+                        {orders.data?.length}
+                    </h1>
                 </div>
                 <div className="border-t w-full pt-2 flex justify-end">
                     <a href="#" className="text-gray-600">
@@ -76,7 +66,7 @@ const OrderTable = ({ orders, errors }) => {
                             <tr className="border-b" key={order.id}>
                                 <td className="p-2">
                                     <span className="text-xs block text-gray-500">
-                                        {formatDate(order.created_at)}
+                                        {formatDateTime(order.created_at)}
                                     </span>
                                     {order.order_number}
                                 </td>

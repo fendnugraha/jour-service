@@ -15,19 +15,6 @@ const Dashboard = () => {
     const closeModal = () => {
         setIsModalCreateOrderOpen(false)
     }
-
-    function formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true, // Use 12-hour format; set to false for 24-hour format
-            timeZone: 'Asia/Jakarta',
-        })
-    }
     const [isModalCreateOrderOpen, setIsModalCreateOrderOpen] = useState(false)
 
     const fetchOrder = async () => {
