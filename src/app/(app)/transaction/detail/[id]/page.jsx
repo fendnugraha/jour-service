@@ -6,6 +6,7 @@ import axios from '@/lib/axios'
 import Link from 'next/link'
 import { ArrowLeftCircleIcon, PlusCircleIcon } from '@heroicons/react/24/solid'
 import formatDateTime from '@/lib/formatDateTime'
+import formatNumber from '@/lib/formatNumber'
 import Timeline from '@/components/Timeline'
 
 const OrderDetail = ({ params }) => {
@@ -53,6 +54,12 @@ const OrderDetail = ({ params }) => {
     useEffect(() => {
         fetchOrderById()
     }, [id]) // Pastikan `id` ada sebagai dependensi
+    // console.log(order)
+
+    const serviceFee = order?.journal?.filter(
+        journal => journal.cred_code === '40100-002',
+    )
+
     return (
         <>
             <Header title="Transaction" />
@@ -269,16 +276,26 @@ const OrderDetail = ({ params }) => {
                                                             600.000
                                                         </td>
                                                     </tr>
-                                                    <tr className="border">
-                                                        <td
-                                                            className="p-1 border text-end"
-                                                            colSpan={2}>
-                                                            Biaya Jasa Service
-                                                        </td>
-                                                        <td className="border p-1 text-end">
-                                                            500.000
-                                                        </td>
-                                                    </tr>
+                                                    {serviceFee.length > 0 && (
+                                                        <tr className="border">
+                                                            <td
+                                                                className="p-1 border text-end"
+                                                                colSpan={2}>
+                                                                Biaya Jasa
+                                                                Service
+                                                            </td>
+                                                            <td className="border p-1 text-end">
+                                                                {serviceFee[0]
+                                                                    .amount > 0
+                                                                    ? formatNumber(
+                                                                          serviceFee[0]
+                                                                              .amount,
+                                                                      )
+                                                                    : 0}
+                                                            </td>
+                                                        </tr>
+                                                    )}
+
                                                     <tr className="border">
                                                         <td
                                                             className="p-1 border text-end"
