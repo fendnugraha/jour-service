@@ -13,6 +13,9 @@ import {
 } from '@heroicons/react/24/solid'
 import Input from '@/components/Input'
 import formatNumber from '@/lib/formatNumber'
+import { useAuth } from '@/hooks/auth'
+import Modal from '@/components/Modal'
+import Label from '@/components/Label'
 
 const useDebounce = (value, delay) => {
     const [debouncedValue, setDebouncedValue] = useState(value)
@@ -31,17 +34,33 @@ const useDebounce = (value, delay) => {
 }
 
 const SparepartCart = ({ params }) => {
+    const { id } = params
+    const { user } = useAuth({ middleware: 'auth' })
     const [notification, setNotification] = useState('')
     const [order, setOrder] = useState(null) // Default null untuk data tunggal
     const [errors, setErrors] = useState([])
     const [products, setProducts] = useState([])
     const [search, setSearch] = useState('')
-    const [serviceFee, setServiceFee] = useState(0)
-    const [discount, setDiscount] = useState(0)
+    const [cart, setCart] = useState([])
+    const [checkoutOrder, setCheckoutOrder] = useState({
+        cart: cart,
+        serviceFee: 0,
+        discount: 0,
+        total: 0,
+        payment_method: '' ?? 'Cash',
+        order_id: order?.id,
+        warehouse_id: user.role.warehouse_id,
+        user_id: user.id,
+        contact_id: null,
+    })
     const debouncedSearch = useDebounce(search, 500) // Apply debounce with 500ms delay
     const [isProductListOpen, setIsProductListOpen] = useState(false)
+    const [isCredit, setIsCredit] = useState(false)
     const dropdownRef = useRef(null)
-    const [cart, setCart] = useState([])
+    const [isModalCheckOutOpen, setIsModalCheckOutOpen] = useState(false)
+    const closeModal = () => {
+        setIsModalCheckOutOpen(false)
+    }
 
     const handleClickOutside = event => {
         if (
@@ -84,8 +103,6 @@ const SparepartCart = ({ params }) => {
     useEffect(() => {
         fetchProduct()
     }, [debouncedSearch])
-
-    const { id } = params
 
     const fetchOrderById = async () => {
         try {
@@ -189,10 +206,7 @@ const SparepartCart = ({ params }) => {
             0,
         )
 
-        // Ensure serviceFee and discount are numbers
-        const total = Number(cartTotal) + Number(serviceFee) - Number(discount)
-
-        return total
+        return cartTotal
     }
 
     useEffect(() => {
@@ -206,14 +220,11 @@ const SparepartCart = ({ params }) => {
                 cart,
                 serviceFee: serviceFee,
                 discount: discount,
-                transaction_type: 'Sales',
                 total: calculateTotalPrice(),
                 order_id: order?.id,
             })
             setNotification(response.data.message)
             handleClearCart()
-            setServiceFee(0)
-            setDiscount(0)
         } catch (error) {
             const errorMsg = error.response?.data?.errors || [
                 'Something went wrong.',
@@ -236,13 +247,18 @@ const SparepartCart = ({ params }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white">
-                            <h1 className="text-xl">
-                                <span className="font-bold">
-                                    {' '}
-                                    Order Number:
-                                </span>{' '}
-                                {order?.order_number}
-                            </h1>
+                            <div className="flex justify-between items-center">
+                                <h1 className="text-xl">
+                                    <span className="font-bold">
+                                        {' '}
+                                        Customer:
+                                    </span>{' '}
+                                    {order?.customer_name}
+                                </h1>
+                                <h1 className="text-xl">
+                                    {order?.order_number}
+                                </h1>
+                            </div>
                             <div className="relative mt-4" ref={dropdownRef}>
                                 <Input
                                     type="search"
@@ -251,20 +267,108 @@ const SparepartCart = ({ params }) => {
                                     placeholder="Cari products.."
                                     className={`w-1/2`}
                                 />
-                                {calculateTotalPrice() !== 0 && (
-                                    <button
-                                        onClick={handleCheckout}
-                                        className="bg-indigo-500 hover:bg-indigo-400 text-white px-4 py-2 rounded-lg ml-2">
-                                        Checkout
-                                    </button>
-                                )}
-                                {cart.length > 0 && (
-                                    <button
-                                        onClick={handleClearCart}
-                                        className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg ml-2">
-                                        Clear Cart
-                                    </button>
-                                )}
+
+                                <Modal
+                                    isOpen={isModalCheckOutOpen}
+                                    onClose={closeModal}
+                                    modalTitle={'Checkout'}>
+                                    <div className="mb-4">
+                                        <table className="w-full border border-dashed table-auto mb-2">
+                                            <tbody>
+                                                <tr className="border border-dashed">
+                                                    <td className="p-2 border border-dashed w-3/4">
+                                                        Total Biaya Sparepart
+                                                    </td>
+                                                    <td className="p-2 text-end">
+                                                        Rp.{' '}
+                                                        {formatNumber(
+                                                            calculateTotalPrice(),
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                                <tr className="border border-dashed">
+                                                    <td className="p-2 border border-dashed w-3/4">
+                                                        Biaya Jasa Service
+                                                    </td>
+                                                    <td className="p-2 text-end">
+                                                        Rp.{' '}
+                                                        {formatNumber(
+                                                            checkoutOrder.serviceFee,
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                                {checkoutOrder.discount > 0 && (
+                                                    <tr className="border border-dashed text-red-500">
+                                                        <td className="p-2 border border-dashed w-3/4">
+                                                            Discount
+                                                        </td>
+                                                        <td className="p-2 text-end">
+                                                            Rp.{' -'}
+                                                            {formatNumber(
+                                                                checkoutOrder.discount,
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                        <h1 className="font-bold text-2xl mb-2 text-end">
+                                            Total Bayar: Rp.{' '}
+                                            {formatNumber(
+                                                calculateTotalPrice() +
+                                                    Number(
+                                                        checkoutOrder.serviceFee,
+                                                    ) -
+                                                    Number(
+                                                        checkoutOrder.discount,
+                                                    ),
+                                            )}
+                                        </h1>
+                                        <div className="flex justify-between gap-4 pe-4 items-center w-fit bg-slate-800 rounded-full mb-2">
+                                            <button
+                                                onClick={() =>
+                                                    setIsCredit(!isCredit)
+                                                }
+                                                className={`w-14 text-white flex items-center p-1 rounded-full transition-colors duration-300 ${
+                                                    isCredit
+                                                        ? 'bg-yellow-400'
+                                                        : 'bg-slate-500'
+                                                }`}>
+                                                <div
+                                                    className={`w-5 h-5 bg-white rounded-full transform transition-transform duration-300 ${
+                                                        isCredit
+                                                            ? 'translate-x-7'
+                                                            : 'translate-x-0'
+                                                    }`}></div>
+                                            </button>
+                                            <h1 className="text-md text-white">
+                                                {isCredit ? 'Credit' : 'Cash'}
+                                            </h1>
+                                        </div>
+                                        <div className="">
+                                            <Label htmlFor="account">
+                                                Account Pembayaran Cash/Transfer
+                                            </Label>
+                                            <select className="w-full rounded-xl p-2">
+                                                <option value="Cash">
+                                                    Cash
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-end gap-2">
+                                        <button
+                                            onClick={closeModal}
+                                            className="border border-red-500 text-red-500 p-3 w-44 rounded-xl">
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleCheckout}
+                                            className="bg-indigo-500 text-white p-3 w-44 rounded-xl">
+                                            Checkout
+                                        </button>
+                                    </div>
+                                </Modal>
 
                                 {isProductListOpen && (
                                     <div
@@ -293,10 +397,10 @@ const SparepartCart = ({ params }) => {
                                 )}
                             </div>
 
-                            <table className="table mt-4">
+                            <table className="table-auto w-full mt-4">
                                 <thead>
-                                    <tr>
-                                        <th className="">
+                                    <tr className="text-sm border-b">
+                                        <th className="p-3">
                                             <button
                                                 onClick={() =>
                                                     handleClearCart()
@@ -320,7 +424,7 @@ const SparepartCart = ({ params }) => {
                                         cart.map(item => (
                                             <tr
                                                 key={item.id}
-                                                className="text-sm">
+                                                className="text-sm border-b">
                                                 <td className="text-center">
                                                     <button
                                                         onClick={() =>
@@ -331,8 +435,12 @@ const SparepartCart = ({ params }) => {
                                                         <XCircleIcon className="size-5 inline text-red-600" />
                                                     </button>
                                                 </td>
-                                                <td className="w-1/2">
+                                                <td className="w-1/2 p-3">
                                                     {item.name}
+                                                    <span className="block text-slate-400 text-xs">
+                                                        {item.code} Sisa Stok:{' '}
+                                                        {item.end_stock} Pcs
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <div className="flex items-center justify-center gap-4">
@@ -357,7 +465,7 @@ const SparepartCart = ({ params }) => {
                                                         </button>
                                                     </div>
                                                 </td>
-                                                <td className="text-end">
+                                                <td className="text-end py-3">
                                                     <Input
                                                         type="text"
                                                         className={
@@ -388,35 +496,58 @@ const SparepartCart = ({ params }) => {
                                             </td>
                                         </tr>
                                     )}
-                                    <tr>
+                                    <tr className="">
                                         <td></td>
                                         <td></td>
-                                        <td>Biaya Jasa Service (Rp.)</td>
-                                        <td className="text-end">
-                                            <Input
-                                                type="text"
-                                                className="text-end text-xs"
-                                                value={serviceFee}
-                                                onChange={e => {
-                                                    setServiceFee(
-                                                        e.target.value,
-                                                    )
-                                                }}
-                                                placeholder="Jasa Service (Rp.)"
-                                            />
+                                        <td className="text-left font-bold">
+                                            Total Biaya Sparepart
+                                        </td>
+                                        <td className="text-end py-3 font-bold">
+                                            Rp.{' '}
+                                            {formatNumber(
+                                                calculateTotalPrice(),
+                                            )}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td></td>
-                                        <td>Diskon (Rp.)</td>
-                                        <td className="text-end">
+                                        <td className="text-sm">
+                                            Biaya Jasa Service (Rp.)
+                                        </td>
+                                        <td className="text-end py-1">
+                                            <Input
+                                                type="text"
+                                                className="text-end text-xs"
+                                                value={checkoutOrder.serviceFee}
+                                                onChange={e => {
+                                                    setCheckoutOrder({
+                                                        ...checkoutOrder,
+                                                        serviceFee:
+                                                            e.target.value,
+                                                    })
+                                                }}
+                                                placeholder="Jasa Service (Rp.)"
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr className="border-b">
+                                        <td></td>
+                                        <td></td>
+                                        <td className="text-sm">
+                                            Diskon (Rp.)
+                                        </td>
+                                        <td className="text-end py-1">
                                             <Input
                                                 type="text"
                                                 className="text-end text-red-500 text-xs"
-                                                value={discount}
+                                                value={checkoutOrder.discount}
                                                 onChange={e => {
-                                                    setDiscount(e.target.value)
+                                                    setCheckoutOrder({
+                                                        ...checkoutOrder,
+                                                        discount:
+                                                            e.target.value,
+                                                    })
                                                 }}
                                                 placeholder="Diskon (Rp.)"
                                             />
@@ -427,16 +558,38 @@ const SparepartCart = ({ params }) => {
                                     <tr className="text-xl">
                                         <th></th>
                                         <th></th>
-                                        <th className="text-left">Total:</th>
-                                        <th className="text-end text-xl">
+                                        <th className="text-left">Total :</th>
+                                        <th className="text-end text-xl py-3">
                                             Rp.{' '}
                                             {formatNumber(
-                                                calculateTotalPrice(),
+                                                calculateTotalPrice() +
+                                                    Number(
+                                                        checkoutOrder.serviceFee,
+                                                    ) -
+                                                    Number(
+                                                        checkoutOrder.discount,
+                                                    ),
                                             )}
                                         </th>
                                     </tr>
                                 </tfoot>
                             </table>
+                            <div className="flex justify-between gap-1 items-center">
+                                <Link
+                                    href={'/transaction'}
+                                    className="bg-red-500 hover:bg-red-400 text-white px-6 py-3 rounded-lg ml-2">
+                                    Kembali
+                                </Link>
+                                {calculateTotalPrice() !== 0 && (
+                                    <button
+                                        onClick={() =>
+                                            setIsModalCheckOutOpen(true)
+                                        }
+                                        className="bg-indigo-500 hover:bg-indigo-400 text-white w-44 py-3 rounded-lg ml-2">
+                                        Checkout
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
