@@ -109,7 +109,7 @@ const Transaction = ({ user }) => {
                                                     </span>
                                                 </td>
                                                 <td>{order.phone_type}</td>
-                                                <td>{order.customer_name}</td>
+                                                <td>{order.contact.name}</td>
                                                 <td>
                                                     {order.status}
                                                     <span className="text-xs block">

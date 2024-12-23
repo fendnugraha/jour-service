@@ -129,7 +129,8 @@ const OrderDetail = ({ params }) => {
                                                         <td>
                                                             :{' '}
                                                             {
-                                                                order?.customer_name
+                                                                order?.contact
+                                                                    ?.name
                                                             }
                                                         </td>
                                                     </tr>
@@ -140,7 +141,8 @@ const OrderDetail = ({ params }) => {
                                                         <td>
                                                             :{' '}
                                                             {
-                                                                order?.phone_number
+                                                                order?.contact
+                                                                    ?.phone_number
                                                             }
                                                         </td>
                                                     </tr>
@@ -149,7 +151,11 @@ const OrderDetail = ({ params }) => {
                                                             Alamat
                                                         </td>
                                                         <td>
-                                                            : {order?.address}
+                                                            :{' '}
+                                                            {
+                                                                order?.contact
+                                                                    ?.address
+                                                            }
                                                         </td>
                                                     </tr>
                                                     <tr className="border-b">

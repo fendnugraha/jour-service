@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 import axios from '@/lib/axios'
 import Link from 'next/link'
 import {
-    ArrowLeftCircleIcon,
     MinusCircleIcon,
     PlusCircleIcon,
     TrashIcon,
@@ -41,21 +40,22 @@ const SparepartCart = ({ params }) => {
     const [errors, setErrors] = useState([])
     const [products, setProducts] = useState([])
     const [search, setSearch] = useState('')
+    const [isCredit, setIsCredit] = useState(false)
     const [cart, setCart] = useState([])
+    const [cashAndBankAccount, setCashAndBankAccount] = useState([])
     const [checkoutOrder, setCheckoutOrder] = useState({
         cart: cart,
         serviceFee: 0,
         discount: 0,
-        total: 0,
-        payment_method: '' ?? 'Cash',
+        payment_method: isCredit ? 'Credit' : 'Cash',
         order_id: order?.id,
         warehouse_id: user.role.warehouse_id,
         user_id: user.id,
-        contact_id: null,
+        contact_id: '',
+        account: '',
     })
     const debouncedSearch = useDebounce(search, 500) // Apply debounce with 500ms delay
     const [isProductListOpen, setIsProductListOpen] = useState(false)
-    const [isCredit, setIsCredit] = useState(false)
     const dropdownRef = useRef(null)
     const [isModalCheckOutOpen, setIsModalCheckOutOpen] = useState(false)
     const closeModal = () => {
@@ -119,6 +119,31 @@ const SparepartCart = ({ params }) => {
     useEffect(() => {
         fetchOrderById()
     }, [id]) // Pastikan `id` ada sebagai dependensi
+
+    useEffect(() => {
+        if (order?.contact_id) {
+            setCheckoutOrder(prev => ({
+                ...prev,
+                contact_id: order.contact_id,
+                order_id: order.id,
+            }))
+        }
+    }, [order])
+
+    useEffect(() => {
+        const getCashAndBank = async () => {
+            try {
+                const response = await axios.get(`/api/auth/get-cash-and-bank`)
+                setCashAndBankAccount(response.data.data)
+            } catch (error) {
+                const errorMsg = error.response?.data?.errors || [
+                    'Something went wrong.',
+                ]
+                setErrors(errorMsg)
+            }
+        }
+        getCashAndBank()
+    }, [])
 
     //Cart Area
 
@@ -216,13 +241,10 @@ const SparepartCart = ({ params }) => {
 
     const handleCheckout = async () => {
         try {
-            const response = await axios.post('/api/auth/transactions', {
-                cart,
-                serviceFee: serviceFee,
-                discount: discount,
-                total: calculateTotalPrice(),
-                order_id: order?.id,
-            })
+            const response = await axios.post(
+                '/api/auth/checkout-order',
+                checkoutOrder,
+            )
             setNotification(response.data.message)
             handleClearCart()
         } catch (error) {
@@ -230,9 +252,17 @@ const SparepartCart = ({ params }) => {
                 'Something went wrong.',
             ]
             setErrors(errorMsg)
+            console.log(error.response)
         }
     }
 
+    const totalPayment = () => {
+        return (
+            calculateTotalPrice() +
+            Number(checkoutOrder.serviceFee) -
+            Number(checkoutOrder.discount)
+        )
+    }
     // End Cart Area
     return (
         <>
@@ -253,7 +283,7 @@ const SparepartCart = ({ params }) => {
                                         {' '}
                                         Customer:
                                     </span>{' '}
-                                    {order?.customer_name}
+                                    {order?.contact?.name}
                                 </h1>
                                 <h1 className="text-xl">
                                     {order?.order_number}
@@ -349,10 +379,25 @@ const SparepartCart = ({ params }) => {
                                             <Label htmlFor="account">
                                                 Account Pembayaran Cash/Transfer
                                             </Label>
-                                            <select className="w-full rounded-xl p-2">
-                                                <option value="Cash">
-                                                    Cash
+                                            <select
+                                                value={checkoutOrder.account}
+                                                onChange={e =>
+                                                    setCheckoutOrder({
+                                                        ...checkoutOrder,
+                                                        account: e.target.value,
+                                                    })
+                                                }
+                                                className="w-full rounded-xl p-2">
+                                                <option value="">
+                                                    -Pilih account pembayaran-
                                                 </option>
+                                                {cashAndBankAccount?.map(a => (
+                                                    <option
+                                                        value={a.acc_code}
+                                                        key={a.id}>
+                                                        {a.acc_name}
+                                                    </option>
+                                                ))}
                                             </select>
                                         </div>
                                     </div>
@@ -580,7 +625,7 @@ const SparepartCart = ({ params }) => {
                                     className="bg-red-500 hover:bg-red-400 text-white px-6 py-3 rounded-lg ml-2">
                                     Kembali
                                 </Link>
-                                {calculateTotalPrice() !== 0 && (
+                                {totalPayment() !== 0 && (
                                     <button
                                         onClick={() =>
                                             setIsModalCheckOutOpen(true)
