@@ -107,7 +107,11 @@ const OrderDetail = ({ params }) => {
                                         Diagnosing
                                     </option>
                                     <option value="Repairing">Repairing</option>
-                                    <option value="Completed">Completed</option>
+                                    {order?.status === 'Completed' && (
+                                        <option value="Completed">
+                                            Completed
+                                        </option>
+                                    )}
                                 </select>
                             </div>
                             <div>

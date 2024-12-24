@@ -105,9 +105,9 @@ const Navigation = ({ user }) => {
                         </span>
                     </NavLink>
                     <NavLink
-                        href="/setting/product"
+                        href="/setting/contact"
                         isOpen={isOpen}
-                        active={usePathname() === '/setting/product'}>
+                        active={usePathname() === '/setting/contact'}>
                         <div>
                             <UserGroupIcon className="w-5 h-5" />
                         </div>
