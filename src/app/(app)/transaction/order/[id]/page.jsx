@@ -15,6 +15,7 @@ import formatNumber from '@/lib/formatNumber'
 import { useAuth } from '@/hooks/auth'
 import Modal from '@/components/Modal'
 import Label from '@/components/Label'
+import { useRouter } from 'next/navigation'
 
 const useDebounce = (value, delay) => {
     const [debouncedValue, setDebouncedValue] = useState(value)
@@ -33,6 +34,7 @@ const useDebounce = (value, delay) => {
 }
 
 const SparepartCart = ({ params }) => {
+    const router = useRouter()
     const { id } = params
     const { user } = useAuth({ middleware: 'auth' })
     const [notification, setNotification] = useState('')
@@ -44,10 +46,10 @@ const SparepartCart = ({ params }) => {
     const [cart, setCart] = useState([])
     const [cashAndBankAccount, setCashAndBankAccount] = useState([])
     const [checkoutOrder, setCheckoutOrder] = useState({
-        cart: cart,
+        cart: [],
         serviceFee: 0,
         discount: 0,
-        payment_method: isCredit ? 'Credit' : 'Cash',
+        payment_method: 'Cash',
         order_id: order?.id,
         warehouse_id: user.role.warehouse_id,
         user_id: user.id,
@@ -167,6 +169,13 @@ const SparepartCart = ({ params }) => {
 
             // Update localStorage with the new cart
             localStorage.setItem('cart', JSON.stringify(updatedCart))
+
+            // Update checkoutOrder with the new cart
+            setCheckoutOrder(prevOrder => ({
+                ...prevOrder,
+                cart: updatedCart, // Update cart in checkoutOrder
+            }))
+
             return updatedCart
         })
     }
@@ -177,7 +186,11 @@ const SparepartCart = ({ params }) => {
 
             // Update localStorage with the new cart
             localStorage.setItem('cart', JSON.stringify(updatedCart))
-
+            // Update checkoutOrder with the new cart
+            setCheckoutOrder(prevOrder => ({
+                ...prevOrder,
+                cart: updatedCart, // Update cart in checkoutOrder
+            }))
             return updatedCart
         })
     }
@@ -185,6 +198,11 @@ const SparepartCart = ({ params }) => {
     const handleClearCart = () => {
         setCart([])
         localStorage.setItem('cart', JSON.stringify([])) // Clear cart in localStorage
+        // Update checkoutOrder with the new cart
+        setCheckoutOrder(prevOrder => ({
+            ...prevOrder,
+            cart: [], // Update cart in checkoutOrder
+        }))
     }
 
     const handleIncrementQuantity = product => {
@@ -194,7 +212,13 @@ const SparepartCart = ({ params }) => {
                     ? { ...item, quantity: item.quantity + 1 }
                     : item,
             )
-            localStorage.setItem('cart', JSON.stringify(updatedCart)) // Sync with localStorage
+            localStorage.setItem('cart', JSON.stringify(updatedCart))
+            // Sync with localStorage
+            // Update checkoutOrder with the new cart
+            setCheckoutOrder(prevOrder => ({
+                ...prevOrder,
+                cart: updatedCart, // Update cart in checkoutOrder
+            }))
             return updatedCart
         })
     }
@@ -210,7 +234,13 @@ const SparepartCart = ({ params }) => {
                     ? { ...item, quantity: item.quantity - 1 }
                     : item,
             )
-            localStorage.setItem('cart', JSON.stringify(updatedCart)) // Sync with localStorage
+            localStorage.setItem('cart', JSON.stringify(updatedCart))
+            // Sync with localStorage
+            // Update checkoutOrder with the new cart
+            setCheckoutOrder(prevOrder => ({
+                ...prevOrder,
+                cart: updatedCart, // Update cart in checkoutOrder
+            }))
             return updatedCart
         })
     }
@@ -220,7 +250,13 @@ const SparepartCart = ({ params }) => {
             const updatedCart = prevCart.map(item =>
                 item.id === product.id ? { ...item, price: newPrice } : item,
             )
-            localStorage.setItem('cart', JSON.stringify(updatedCart)) // Sync with localStorage
+            localStorage.setItem('cart', JSON.stringify(updatedCart))
+            // Sync with localStorage
+            // Update checkoutOrder with the new cart
+            setCheckoutOrder(prevOrder => ({
+                ...prevOrder,
+                cart: updatedCart, // Update cart in checkoutOrder
+            }))
             return updatedCart
         })
     }
@@ -247,6 +283,11 @@ const SparepartCart = ({ params }) => {
             )
             setNotification(response.data.message)
             handleClearCart()
+            setCheckoutOrder({
+                serviceFee: 0,
+                discount: 0,
+            })
+            router.push('/transaction/detail/' + id)
         } catch (error) {
             const errorMsg = error.response?.data?.errors || [
                 'Something went wrong.',
@@ -356,9 +397,22 @@ const SparepartCart = ({ params }) => {
                                         </h1>
                                         <div className="flex justify-between gap-4 pe-4 items-center w-fit bg-slate-800 rounded-full mb-2">
                                             <button
-                                                onClick={() =>
-                                                    setIsCredit(!isCredit)
-                                                }
+                                                onClick={() => {
+                                                    setIsCredit(
+                                                        prevIsCredit => {
+                                                            const newPaymentMethod =
+                                                                prevIsCredit
+                                                                    ? 'cash'
+                                                                    : 'credit' // Tentukan metode pembayaran berdasarkan nilai sebelumnya
+                                                            setCheckoutOrder({
+                                                                ...checkoutOrder,
+                                                                payment_method:
+                                                                    newPaymentMethod,
+                                                            })
+                                                            return !prevIsCredit // Toggle nilai isCredit
+                                                        },
+                                                    )
+                                                }}
                                                 className={`w-14 text-white flex items-center p-1 rounded-full transition-colors duration-300 ${
                                                     isCredit
                                                         ? 'bg-yellow-400'

@@ -56,9 +56,29 @@ const OrderDetail = ({ params }) => {
     }, [id]) // Pastikan `id` ada sebagai dependensi
     // console.log(order)
 
-    const serviceFee = order?.journal?.filter(
+    // Mengambil service fee yang sesuai
+    const serviceFee = order?.journal?.find(
         journal => journal.cred_code === '40100-002',
     )
+
+    // Menghitung total spareparts
+    const totalSpareparts = order?.transaction?.reduce((total, transaction) => {
+        return (
+            total +
+            Number(transaction.price) * Number(transaction.quantity * -1)
+        )
+    }, 0)
+
+    // Mengambil discount yang sesuai
+    const discount = order?.journal?.find(
+        journal => journal.debt_code === '60111-001',
+    )
+
+    // Menghitung total transaksi
+    const totalTransaction =
+        totalSpareparts +
+        (serviceFee?.amount ?? 0) - // Fallback ke 0 jika serviceFee tidak ada
+        (discount?.amount ?? 0) // Fallback ke 0 jika discount tidak ada
 
     return (
         <>
@@ -80,7 +100,8 @@ const OrderDetail = ({ params }) => {
                                 <select
                                     value={order?.status}
                                     onChange={handleChangeStatusOrder}
-                                    className="px-3 py-1 border rounded">
+                                    disabled={order?.status === 'Completed'}
+                                    className="px-3 py-1 w-32 border rounded">
                                     <option value="Pending">Pending</option>
                                     <option value="Diagnosing">
                                         Diagnosing
@@ -165,7 +186,7 @@ const OrderDetail = ({ params }) => {
                                                             }
                                                         </td>
                                                     </tr>
-                                                    <tr className="border-b">
+                                                    <tr className="border border-dashed-b">
                                                         <td
                                                             colSpan={2}
                                                             className="font-bold text-xl">
@@ -191,7 +212,7 @@ const OrderDetail = ({ params }) => {
                                                         </td>
                                                         <td>:</td>
                                                     </tr>
-                                                    <tr className="border border-dashed">
+                                                    <tr className="border border-dashed border border-dashed-dashed">
                                                         <td
                                                             className="p-2 italic bg-yellow-200"
                                                             colSpan={2}>
@@ -208,114 +229,119 @@ const OrderDetail = ({ params }) => {
                                                 <h1 className="text-xl font-bold">
                                                     Biaya Perbaikan & Sparepart
                                                 </h1>
-                                                <Link
-                                                    href={`/transaction/order/${order?.id}`}
-                                                    className="text-indigo-600 hover:text-indigo-500 underline">
-                                                    <PlusCircleIcon className="w-6 h-6 inline" />{' '}
-                                                    Tambah parts
-                                                </Link>
+                                                {order?.status !==
+                                                    'Completed' && (
+                                                    <Link
+                                                        href={`/transaction/order/${order?.id}`}
+                                                        className="text-indigo-600 hover:text-indigo-500 underline">
+                                                        <PlusCircleIcon className="w-6 h-6 inline" />{' '}
+                                                        Tambah parts
+                                                    </Link>
+                                                )}
                                             </div>
-                                            <table className="table-auto w-full text-sm border">
+                                            <table className="table-auto w-full text-sm border border-dashed">
                                                 <thead>
-                                                    <tr className="border">
-                                                        <th className="border p-1">
+                                                    <tr className="border border-dashed">
+                                                        <th className="border border-dashed p-1">
                                                             Nama Sparepart
                                                         </th>
-                                                        <th className="border">
+                                                        <th className="border border-dashed">
                                                             Harga
                                                         </th>
-                                                        <th className="border">
+                                                        <th className="border border-dashed">
                                                             Subtotal
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td className="p-1 border">
-                                                            Parts 1
-                                                        </td>
-                                                        <td className="border text-end p-1">
-                                                            200.000
-                                                        </td>
-                                                        <td className="border text-end p-1">
-                                                            200.000
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="p-1 border">
-                                                            Parts 2
-                                                        </td>
-                                                        <td className="border text-end p-1">
-                                                            200.000
-                                                        </td>
-                                                        <td className="border text-end p-1">
-                                                            200.000
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="p-1 border">
-                                                            Parts 3
-                                                        </td>
-                                                        <td className="border text-end p-1">
-                                                            200.000
-                                                        </td>
-                                                        <td className="border text-end p-1">
-                                                            200.000
-                                                        </td>
-                                                    </tr>
+                                                    {order.transaction.map(
+                                                        item => (
+                                                            <tr
+                                                                key={item.id}
+                                                                className="text-xs">
+                                                                <td className="p-1 border border-dashed">
+                                                                    {
+                                                                        item
+                                                                            .product
+                                                                            .name
+                                                                    }
+                                                                </td>
+                                                                <td className="border border-dashed text-end p-1">
+                                                                    {formatNumber(
+                                                                        item.price,
+                                                                    )}
+                                                                </td>
+                                                                <td className="border border-dashed text-end p-1">
+                                                                    {formatNumber(
+                                                                        item.price *
+                                                                            -item.quantity,
+                                                                    )}
+                                                                </td>
+                                                            </tr>
+                                                        ),
+                                                    )}
                                                 </tbody>
                                                 <tfoot>
-                                                    <tr className="border">
+                                                    <tr className="border border-dashed">
                                                         <td
                                                             colSpan={2}
-                                                            className="p-1 border text-end">
+                                                            className="p-1 border border-dashed text-end">
                                                             Total Biaya
                                                             Spareparts
                                                         </td>
-                                                        <td className="border p-1 text-end">
-                                                            600.000
+                                                        <td className="border border-dashed p-1 text-end">
+                                                            {formatNumber(
+                                                                totalSpareparts,
+                                                            )}
                                                         </td>
                                                     </tr>
-                                                    {serviceFee.length > 0 && (
-                                                        <tr className="border">
+                                                    {serviceFee?.amount > 0 && (
+                                                        <tr className="border border-dashed">
                                                             <td
-                                                                className="p-1 border text-end"
+                                                                className="p-1 border border-dashed text-end"
                                                                 colSpan={2}>
                                                                 Biaya Jasa
                                                                 Service
                                                             </td>
-                                                            <td className="border p-1 text-end">
-                                                                {serviceFee[0]
-                                                                    .amount > 0
+                                                            <td className="border border-dashed p-1 text-end">
+                                                                {serviceFee.amount >
+                                                                0
                                                                     ? formatNumber(
-                                                                          serviceFee[0]
-                                                                              .amount,
+                                                                          serviceFee.amount,
                                                                       )
                                                                     : 0}
                                                             </td>
                                                         </tr>
                                                     )}
-
-                                                    <tr className="border">
-                                                        <td
-                                                            className="p-1 border text-end"
-                                                            colSpan={2}>
-                                                            Diskon (Rp)
-                                                        </td>
-                                                        <td className="border p-1 text-end text-red-500">
-                                                            - 25.000
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="border">
-                                                        <th
-                                                            className="p-1 border text-end"
-                                                            colSpan={2}>
-                                                            Total
-                                                        </th>
-                                                        <th className="border p-1 text-end">
-                                                            475.000
-                                                        </th>
-                                                    </tr>
+                                                    {discount?.amount > 0 && (
+                                                        <tr className="border border-dashed">
+                                                            <td
+                                                                className="p-1 border border-dashed text-end"
+                                                                colSpan={2}>
+                                                                Diskon (Rp)
+                                                            </td>
+                                                            <td className="border border-dashed p-1 text-end text-red-500">
+                                                                -
+                                                                {formatNumber(
+                                                                    discount.amount,
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                    {totalTransaction > 0 && (
+                                                        <tr className="border border-dashed">
+                                                            <th
+                                                                className="p-1 border border-dashed text-end"
+                                                                colSpan={2}>
+                                                                Total
+                                                            </th>
+                                                            <th className="border border-dashed p-1 text-end">
+                                                                {formatNumber(
+                                                                    totalTransaction,
+                                                                )}
+                                                            </th>
+                                                        </tr>
+                                                    )}
                                                 </tfoot>
                                             </table>
                                         </div>
