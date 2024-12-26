@@ -42,19 +42,19 @@ const SparepartCart = ({ params }) => {
     const [errors, setErrors] = useState([])
     const [products, setProducts] = useState([])
     const [search, setSearch] = useState('')
-    const [isCredit, setIsCredit] = useState(false)
+    const [isCredit, setIsCredit] = useState(true)
     const [cart, setCart] = useState([])
     const [cashAndBankAccount, setCashAndBankAccount] = useState([])
     const [checkoutOrder, setCheckoutOrder] = useState({
         cart: [],
         serviceFee: 0,
         discount: 0,
-        payment_method: 'Cash',
+        payment_method: 'Credit',
         order_id: order?.id,
         warehouse_id: user.role.warehouse_id,
         user_id: user.id,
         contact_id: '',
-        account: '',
+        account: '10400-003',
     })
     const debouncedSearch = useDebounce(search, 500) // Apply debounce with 500ms delay
     const [isProductListOpen, setIsProductListOpen] = useState(false)
@@ -402,8 +402,8 @@ const SparepartCart = ({ params }) => {
                                                         prevIsCredit => {
                                                             const newPaymentMethod =
                                                                 prevIsCredit
-                                                                    ? 'cash'
-                                                                    : 'credit' // Tentukan metode pembayaran berdasarkan nilai sebelumnya
+                                                                    ? 'Cash'
+                                                                    : 'Credit' // Tentukan metode pembayaran berdasarkan nilai sebelumnya
                                                             setCheckoutOrder({
                                                                 ...checkoutOrder,
                                                                 payment_method:
@@ -429,31 +429,68 @@ const SparepartCart = ({ params }) => {
                                                 {isCredit ? 'Credit' : 'Cash'}
                                             </h1>
                                         </div>
-                                        <div className="">
-                                            <Label htmlFor="account">
-                                                Account Pembayaran Cash/Transfer
-                                            </Label>
-                                            <select
-                                                value={checkoutOrder.account}
-                                                onChange={e =>
-                                                    setCheckoutOrder({
-                                                        ...checkoutOrder,
-                                                        account: e.target.value,
-                                                    })
-                                                }
-                                                className="w-full rounded-xl p-2">
-                                                <option value="">
-                                                    -Pilih account pembayaran-
-                                                </option>
-                                                {cashAndBankAccount?.map(a => (
-                                                    <option
-                                                        value={a.acc_code}
-                                                        key={a.id}>
-                                                        {a.acc_name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        {isCredit ? (
+                                            <></>
+                                        ) : (
+                                            <div className="">
+                                                <div className="mb-2">
+                                                    <Label htmlFor="account">
+                                                        Account Pembayaran
+                                                        Cash/Transfer
+                                                    </Label>
+                                                    <select
+                                                        value={
+                                                            checkoutOrder.account
+                                                        }
+                                                        onChange={e =>
+                                                            setCheckoutOrder({
+                                                                ...checkoutOrder,
+                                                                account:
+                                                                    e.target
+                                                                        .value,
+                                                            })
+                                                        }
+                                                        className="w-full rounded-xl p-2">
+                                                        <option value="">
+                                                            -Pilih account
+                                                            pembayaran-
+                                                        </option>
+                                                        {cashAndBankAccount?.map(
+                                                            a => (
+                                                                <option
+                                                                    value={
+                                                                        a.acc_code
+                                                                    }
+                                                                    key={a.id}>
+                                                                    {a.acc_name}
+                                                                </option>
+                                                            ),
+                                                        )}
+                                                    </select>
+                                                </div>
+                                                {/* add input discount */}
+                                                <div className="mb-2">
+                                                    <Label htmlFor="discount">
+                                                        Discount
+                                                    </Label>
+                                                    <Input
+                                                        type="text"
+                                                        value={
+                                                            checkoutOrder.discount
+                                                        }
+                                                        onChange={e =>
+                                                            setCheckoutOrder({
+                                                                ...checkoutOrder,
+                                                                discount:
+                                                                    e.target
+                                                                        .value,
+                                                            })
+                                                        }
+                                                        placeholder="Discount"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="flex justify-end gap-2">
                                         <button
@@ -463,8 +500,8 @@ const SparepartCart = ({ params }) => {
                                         </button>
                                         <button
                                             onClick={handleCheckout}
-                                            className="bg-indigo-500 text-white p-3 w-44 rounded-xl">
-                                            Checkout
+                                            className="bg-green-500 hover:bg-green-400 text-white p-3 w-44 rounded-xl">
+                                            Selesai
                                         </button>
                                     </div>
                                 </Modal>
@@ -627,28 +664,6 @@ const SparepartCart = ({ params }) => {
                                                     })
                                                 }}
                                                 placeholder="Jasa Service (Rp.)"
-                                            />
-                                        </td>
-                                    </tr>
-                                    <tr className="border-b">
-                                        <td></td>
-                                        <td></td>
-                                        <td className="text-sm">
-                                            Diskon (Rp.)
-                                        </td>
-                                        <td className="text-end py-1">
-                                            <Input
-                                                type="text"
-                                                className="text-end text-red-500 text-xs"
-                                                value={checkoutOrder.discount}
-                                                onChange={e => {
-                                                    setCheckoutOrder({
-                                                        ...checkoutOrder,
-                                                        discount:
-                                                            e.target.value,
-                                                    })
-                                                }}
-                                                placeholder="Diskon (Rp.)"
                                             />
                                         </td>
                                     </tr>

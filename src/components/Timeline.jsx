@@ -2,8 +2,9 @@
 import {
     EyeIcon,
     WrenchIcon,
-    CheckCircleIcon,
     DocumentCheckIcon,
+    CheckBadgeIcon,
+    ClipboardDocumentCheckIcon,
 } from '@heroicons/react/24/solid'
 
 const Timeline = ({ status }) => {
@@ -18,8 +19,14 @@ const Timeline = ({ status }) => {
         { id: 3, name: 'Repairing', icon: WrenchIcon, color: 'yellow-400' },
         {
             id: 4,
+            name: 'Finished',
+            icon: ClipboardDocumentCheckIcon,
+            color: 'green-400',
+        },
+        {
+            id: 5,
             name: 'Completed',
-            icon: CheckCircleIcon,
+            icon: CheckBadgeIcon,
             color: 'green-500',
         },
     ]
