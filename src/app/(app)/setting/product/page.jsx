@@ -4,11 +4,7 @@ import Header from '@/app/(app)/Header'
 import Paginator from '@/components/Paginator'
 import axios from '@/lib/axios'
 import { useState, useEffect } from 'react'
-import {
-    PencilSquareIcon,
-    PlusCircleIcon,
-    TrashIcon,
-} from '@heroicons/react/24/solid'
+import { PencilSquareIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid'
 import Input from '@/components/Input'
 import FormCreateAccount from '../account/formCreateAccount'
 import Modal from '@/components/Modal'
@@ -23,12 +19,8 @@ export default function Product() {
     // const [selectedUpdateAccount, setSelectedUpdateAccount] = useState(null)
     const [notification, setNotification] = useState('')
     const [errors, setErrors] = useState([]) // Store validation errors
-    const [isModalCreateProductOpen, setIsModalCreateProductOpen] =
-        useState(false)
-    const [
-        isModalCreateCategoryProductOpen,
-        setIsModalCreateCategoryProductOpen,
-    ] = useState(false)
+    const [isModalCreateProductOpen, setIsModalCreateProductOpen] = useState(false)
+    const [isModalCreateCategoryProductOpen, setIsModalCreateCategoryProductOpen] = useState(false)
     // const [isModalUpdateAccountOpen, setIsModalUpdateAccountOpen] =
     //     useState(false)
 
@@ -119,18 +111,14 @@ export default function Product() {
     const handleChangePage = url => {
         fetchProducts(url)
     }
+
     return (
         <>
             <Header title="Product" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        {notification && (
-                            <Notification
-                                notification={notification}
-                                onClose={() => setNotification('')}
-                            />
-                        )}
+                        {notification && <Notification notification={notification} onClose={() => setNotification('')} />}
                         <div className="p-6 bg-white border-b border-gray-200">
                             {errors.length > 0 && (
                                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
@@ -150,50 +138,24 @@ export default function Product() {
                                     </button>
                                 )} */}
                                 <div className="flex justify-end gap-2">
-                                    <button
-                                        className="btn-primary"
-                                        onClick={() =>
-                                            setIsModalCreateProductOpen(true)
-                                        }>
-                                        Tambah Produk{' '}
-                                        <PlusCircleIcon className="w-5 h-5 inline" />
+                                    <button className="btn-primary" onClick={() => setIsModalCreateProductOpen(true)}>
+                                        Tambah Produk <PlusCircleIcon className="w-5 h-5 inline" />
                                     </button>
-                                    <button
-                                        className="btn-primary"
-                                        onClick={() =>
-                                            setIsModalCreateCategoryProductOpen(
-                                                true,
-                                            )
-                                        }>
-                                        Tambah Kategori{' '}
-                                        <PlusCircleIcon className="w-5 h-5 inline" />
+                                    <button className="btn-primary" onClick={() => setIsModalCreateCategoryProductOpen(true)}>
+                                        Tambah Kategori <PlusCircleIcon className="w-5 h-5 inline" />
                                     </button>
                                 </div>
-                                <Modal
-                                    isOpen={isModalCreateProductOpen}
-                                    onClose={closeModal}
-                                    modalTitle="Create account">
+                                <Modal isOpen={isModalCreateProductOpen} onClose={closeModal} modalTitle="Create account">
                                     <CreateProduct
-                                        isModalOpen={
-                                            setIsModalCreateProductOpen
-                                        }
-                                        notification={message =>
-                                            setNotification(message)
-                                        }
+                                        isModalOpen={setIsModalCreateProductOpen}
+                                        notification={message => setNotification(message)}
                                         fetchProducts={fetchProducts}
                                     />
                                 </Modal>
-                                <Modal
-                                    isOpen={isModalCreateCategoryProductOpen}
-                                    onClose={closeModal}
-                                    modalTitle="Create account">
+                                <Modal isOpen={isModalCreateCategoryProductOpen} onClose={closeModal} modalTitle="Create account">
                                     <CreateCategoryProduct
-                                        isModalOpen={
-                                            setIsModalCreateCategoryProductOpen
-                                        }
-                                        notification={message =>
-                                            setNotification(message)
-                                        }
+                                        isModalOpen={setIsModalCreateCategoryProductOpen}
+                                        notification={message => setNotification(message)}
                                         fetchProducts={fetchProducts}
                                     />
                                 </Modal>
@@ -212,53 +174,34 @@ export default function Product() {
                                 <tbody>
                                     {product?.data?.length === 0 ? (
                                         <tr>
-                                            <td colSpan="6">
-                                                No products found
-                                            </td>
+                                            <td colSpan="6">No products found</td>
                                         </tr>
                                     ) : (
                                         product?.data?.map(product => (
                                             <tr key={product.id}>
                                                 <td className="text-center">
                                                     <Input
-                                                        checked={selectedProduct.includes(
-                                                            product.id,
-                                                        )}
+                                                        checked={selectedProduct.includes(product.id)}
                                                         onChange={() => {
-                                                            handleSelectProduct(
-                                                                product.id,
-                                                            )
+                                                            handleSelectProduct(product.id)
                                                         }}
                                                         type="checkbox"
                                                     />
                                                 </td>
                                                 <td>{product.name}</td>
                                                 <td>{product.category}</td>
-                                                <td>
-                                                    {formatNumber(
-                                                        product.price,
-                                                    )}
-                                                </td>
+                                                <td>{formatNumber(product.price)}</td>
                                                 <td>{product.end_stock}</td>
                                                 <td className="flex justify-center">
-                                                    <button className="btn-primary mr-2">
-                                                        Edit
-                                                    </button>
-                                                    <button className="btn-primary">
-                                                        Delete
-                                                    </button>
+                                                    <button className="btn-primary mr-2">Edit</button>
+                                                    <button className="btn-primary">Delete</button>
                                                 </td>
                                             </tr>
                                         ))
                                     )}
                                 </tbody>
                             </table>
-                            {product?.links && (
-                                <Paginator
-                                    links={product}
-                                    handleChangePage={handleChangePage}
-                                />
-                            )}
+                            {product?.links && <Paginator links={product} handleChangePage={handleChangePage} />}
                         </div>
                     </div>
                 </div>

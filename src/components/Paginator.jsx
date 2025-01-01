@@ -28,16 +28,12 @@ export default function Paginator({ links, handleChangePage }) {
                     </p>
                 </div>
                 <div>
-                    <nav
-                        className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                        aria-label="Pagination">
+                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                         {links?.links && links?.links?.length > 1
                             ? links?.links?.map((link, index) => (
                                   <button
                                       key={index}
-                                      onClick={() =>
-                                          handleChangePage(link?.url)
-                                      }
+                                      onClick={() => handleChangePage(link?.url)}
                                       disabled={!link.url}
                                       className={
                                           link.active

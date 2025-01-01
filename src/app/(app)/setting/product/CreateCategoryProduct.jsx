@@ -3,11 +3,7 @@ import axios from '@/lib/axios'
 import Input from '@/components/Input'
 import Button from '@/components/Button'
 
-const CreateCategoryProduct = ({
-    isModalOpen,
-    notification,
-    fetchProducts,
-}) => {
+const CreateCategoryProduct = ({ isModalOpen, notification, fetchProducts }) => {
     const [errors, setErrors] = useState([])
     const [newCategoryProduct, setNewCategoryProduct] = useState({
         name: '',
@@ -17,10 +13,7 @@ const CreateCategoryProduct = ({
     const handleCreateCategoryProduct = async e => {
         e.preventDefault()
         try {
-            const response = await axios.post(
-                '/api/auth/product-categories',
-                newCategoryProduct,
-            )
+            const response = await axios.post('/api/auth/product-categories', newCategoryProduct)
             notification(response.data.message)
             if (response.status === 201) {
                 // Reset form fields and close modal on success
@@ -40,9 +33,7 @@ const CreateCategoryProduct = ({
     return (
         <form>
             <div className="mb-4">
-                <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900">
+                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                     Category Name
                 </label>
                 <Input
@@ -58,15 +49,11 @@ const CreateCategoryProduct = ({
                     className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${errors.name ? 'border-red-500' : ''}`}
                     placeholder="Enter category name"
                 />
-                {errors.name && (
-                    <p className="text-red-500 text-xs">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
             </div>
 
             <div className="mb-4">
-                <label
-                    htmlFor="prefix"
-                    className="block mb-2 text-sm font-medium text-gray-900">
+                <label htmlFor="prefix" className="block mb-2 text-sm font-medium text-gray-900">
                     Prefix
                 </label>
                 <Input
@@ -82,9 +69,7 @@ const CreateCategoryProduct = ({
                     className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 ${errors.prefix ? 'border-red-500' : ''}`}
                     placeholder="Enter prefix"
                 />
-                {errors.prefix && (
-                    <p className="text-red-500 text-xs">{errors.prefix}</p>
-                )}
+                {errors.prefix && <p className="text-red-500 text-xs">{errors.prefix}</p>}
             </div>
             <div>
                 <Button

@@ -3,7 +3,7 @@ import AuthCard from '@/app/(auth)/AuthCard'
 import ApplicationLogo from '@/components/ApplicationLogo'
 
 export const metadata = {
-    title: 'Laravel',
+    title: 'Jor Accounting Service Edition',
 }
 
 const Layout = ({ children }) => {

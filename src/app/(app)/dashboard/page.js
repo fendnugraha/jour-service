@@ -32,12 +32,7 @@ const Dashboard = () => {
 
     return (
         <>
-            {notification && (
-                <Notification
-                    notification={notification}
-                    onClose={() => setNotification('')}
-                />
-            )}
+            {notification && <Notification notification={notification} onClose={() => setNotification('')} />}
             <div className="">
                 {/* <h1 className="text-2xl font-bold mb-4">Point of Sales - Add to Cart</h1> */}
                 <Header title={'Dashboard'} />
@@ -48,15 +43,10 @@ const Dashboard = () => {
                         <option value="this-month">This Month</option>
                         <option value="last-month">Last Month</option>
                     </select>
-                    <button
-                        onClick={() => setIsModalCreateOrderOpen(true)}
-                        className="bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600">
+                    <button onClick={() => setIsModalCreateOrderOpen(true)} className="bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600">
                         <PlusCircleIcon className="w-6 h-6 inline" /> New order
                     </button>
-                    <Modal
-                        isOpen={isModalCreateOrderOpen}
-                        onClose={closeModal}
-                        modalTitle="Create new order">
+                    <Modal isOpen={isModalCreateOrderOpen} onClose={closeModal} modalTitle="Create new order">
                         <CreateOrderForm
                             isModalOpen={setIsModalCreateOrderOpen}
                             notification={message => {

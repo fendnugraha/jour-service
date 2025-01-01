@@ -51,9 +51,7 @@ const CreateProduct = ({ isModalOpen, notification, fetchProducts }) => {
     return (
         <form>
             <div className="mb-4">
-                <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900">
+                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                     Product Name
                 </label>
                 <Input
@@ -69,14 +67,10 @@ const CreateProduct = ({ isModalOpen, notification, fetchProducts }) => {
                     className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${errors.name ? 'border-red-500' : ''}`}
                     placeholder="Enter product name"
                 />
-                {errors.name && (
-                    <p className="text-red-500 text-xs">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
             </div>
             <div className="mb-4">
-                <label
-                    htmlFor="category"
-                    className="block mb-2 text-sm font-medium text-gray-900">
+                <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900">
                     Category
                 </label>
                 <select
@@ -95,15 +89,11 @@ const CreateProduct = ({ isModalOpen, notification, fetchProducts }) => {
                         </option>
                     ))}
                 </select>
-                {errors.category && (
-                    <p className="text-red-500 text-xs">{errors.category}</p>
-                )}
+                {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
             </div>
             <div className="flex gap-4 mb-4">
                 <div>
-                    <label
-                        htmlFor="price"
-                        className="block mb-2 text-sm font-medium text-gray-900">
+                    <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900">
                         Price
                     </label>
                     <Input
@@ -119,14 +109,10 @@ const CreateProduct = ({ isModalOpen, notification, fetchProducts }) => {
                         className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${errors.price ? 'border-red-500' : ''}`}
                         placeholder="Enter product price"
                     />
-                    {errors.price && (
-                        <p className="text-red-500 text-xs">{errors.price}</p>
-                    )}
+                    {errors.price && <p className="text-red-500 text-xs">{errors.price}</p>}
                 </div>
                 <div>
-                    <label
-                        htmlFor="cost"
-                        className="block mb-2 text-sm font-medium text-gray-900">
+                    <label htmlFor="cost" className="block mb-2 text-sm font-medium text-gray-900">
                         Cost
                     </label>
                     <Input
@@ -142,9 +128,7 @@ const CreateProduct = ({ isModalOpen, notification, fetchProducts }) => {
                         className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${errors.cost ? 'border-red-500' : ''}`}
                         placeholder="Enter product cost"
                     />
-                    {errors.cost && (
-                        <p className="text-red-500 text-xs">{errors.cost}</p>
-                    )}
+                    {errors.cost && <p className="text-red-500 text-xs">{errors.cost}</p>}
                 </div>
             </div>
             <div>

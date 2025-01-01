@@ -3,11 +3,7 @@ import { useState, useEffect } from 'react'
 import Input from '@/components/Input'
 import ProductCard from '@/components/ProductCard'
 import axios from '@/lib/axios'
-import {
-    MinusCircleIcon,
-    PlusCircleIcon,
-    TrashIcon,
-} from '@heroicons/react/24/solid'
+import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid'
 
 // Utility function for debouncing
 const useDebounce = (value, delay) => {
@@ -66,16 +62,10 @@ const Sales = () => {
     // Add product to cart
     const handleAddToCart = product => {
         setCart(prevCart => {
-            const existingProduct = prevCart.find(
-                item => item.id === product.id,
-            )
+            const existingProduct = prevCart.find(item => item.id === product.id)
             if (existingProduct) {
                 // If product is already in the cart, increase its quantity
-                return prevCart.map(item =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item,
-                )
+                return prevCart.map(item => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
             }
             // Otherwise, add the product to the cart with quantity 1
             return [...prevCart, { ...product, quantity: 1 }]
@@ -86,20 +76,14 @@ const Sales = () => {
     // eslint-disable-next-line no-unused-vars
     const handleUpdateQuantity = (product, newQuantity) => {
         setCart(prevCart => {
-            return prevCart.map(item =>
-                item.id === product.id
-                    ? { ...item, quantity: newQuantity }
-                    : item,
-            )
+            return prevCart.map(item => (item.id === product.id ? { ...item, quantity: newQuantity } : item))
         })
     }
 
     // update product price in cart
     const handleUpdatePrice = (product, newPrice) => {
         setCart(prevCart => {
-            return prevCart.map(item =>
-                item.id === product.id ? { ...item, price: newPrice } : item,
-            )
+            return prevCart.map(item => (item.id === product.id ? { ...item, price: newPrice } : item))
         })
     }
 
@@ -112,11 +96,7 @@ const Sales = () => {
     // Add quantity by 1
     const handleIncrementQuantity = product => {
         setCart(prevCart => {
-            return prevCart.map(item =>
-                item.id === product.id
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item,
-            )
+            return prevCart.map(item => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
         })
     }
 
@@ -128,20 +108,13 @@ const Sales = () => {
             return
         }
         setCart(prevCart => {
-            return prevCart.map(item =>
-                item.id === product.id
-                    ? { ...item, quantity: item.quantity - 1 }
-                    : item,
-            )
+            return prevCart.map(item => (item.id === product.id ? { ...item, quantity: item.quantity - 1 } : item))
         })
     }
 
     // Calculate total price
     const calculateTotalPrice = () => {
-        return cart.reduce(
-            (total, item) => total + item.price * item.quantity,
-            0,
-        )
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0)
         // return cart.reduce((total, item) => total + item.price * item.quantity, 0);
     }
 
@@ -192,22 +165,14 @@ const Sales = () => {
                                     {productList?.data?.length === 0 ? (
                                         <div>No data</div>
                                     ) : (
-                                        productList?.data?.map(product => (
-                                            <ProductCard
-                                                product={product}
-                                                key={product.id}
-                                                onAddToCart={handleAddToCart}
-                                            />
-                                        ))
+                                        productList?.data?.map(product => <ProductCard product={product} key={product.id} onAddToCart={handleAddToCart} />)
                                     )}
                                 </div>
                             </div>
                             <div className="col-span-2 bg-white rounded-2xl p-6 shadow-md">
                                 <div className="flex justify-between items-center mb-4">
                                     <h1 className="font-bold">Items</h1>
-                                    <button
-                                        onClick={handleClearCart}
-                                        className="text-red-600 hover:underline">
+                                    <button onClick={handleClearCart} className="text-red-600 hover:underline">
                                         Clear all
                                     </button>
                                 </div>
@@ -215,41 +180,20 @@ const Sales = () => {
                                     <div>Cart is empty</div>
                                 ) : (
                                     cart.map(item => (
-                                        <div
-                                            className="border-b border-gray-200 py-2 nth-last-child(1):border-0"
-                                            key={item.id}>
+                                        <div className="border-b border-gray-200 py-2 nth-last-child(1):border-0" key={item.id}>
                                             <div className="flex justify-between align-top">
-                                                <h1 className="font-bold text-sm">
-                                                    {item.name}
-                                                </h1>
-                                                <button
-                                                    onClick={() =>
-                                                        handleRemoveFromCart(
-                                                            item,
-                                                        )
-                                                    }>
+                                                <h1 className="font-bold text-sm">{item.name}</h1>
+                                                <button onClick={() => handleRemoveFromCart(item)}>
                                                     <TrashIcon className="w-5 h-5 text-red-600" />
                                                 </button>
                                             </div>
                                             <div className="flex justify-between items-center my-2">
                                                 <div className="flex items-center gap-1">
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDecrementQuantity(
-                                                                item,
-                                                            )
-                                                        }>
+                                                    <button onClick={() => handleDecrementQuantity(item)}>
                                                         <MinusCircleIcon className="w-6 h-6" />
                                                     </button>
-                                                    <span className="mx-2">
-                                                        {item.quantity}
-                                                    </span>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleIncrementQuantity(
-                                                                item,
-                                                            )
-                                                        }>
+                                                    <span className="mx-2">{item.quantity}</span>
+                                                    <button onClick={() => handleIncrementQuantity(item)}>
                                                         <PlusCircleIcon className="w-6 h-6" />
                                                     </button>
                                                 </div>
@@ -263,21 +207,12 @@ const Sales = () => {
                                                     <Input
                                                         type="number"
                                                         value={item.price}
-                                                        onChange={e =>
-                                                            handleUpdatePrice(
-                                                                item,
-                                                                e.target.value,
-                                                            )
-                                                        }
+                                                        onChange={e => handleUpdatePrice(item, e.target.value)}
                                                         className="w-full text-xs text-end border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                                     />
 
                                                     <span className="text-xs block text-end text-gray-500">
-                                                        Subtotal:{' '}
-                                                        {formatNumber(
-                                                            item.price *
-                                                                item.quantity,
-                                                        )}
+                                                        Subtotal: {formatNumber(item.price * item.quantity)}
                                                     </span>
                                                 </div>
                                             </div>

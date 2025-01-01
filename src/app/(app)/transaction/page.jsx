@@ -35,28 +35,15 @@ const Transaction = ({ user }) => {
         <>
             <Header title="Transaction" />
             <div className="py-12">
-                {notification && (
-                    <Notification
-                        notification={notification}
-                        onClose={() => setNotification('')}
-                    />
-                )}
+                {notification && <Notification notification={notification} onClose={() => setNotification('')} />}
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white">
                             <div className="flex justify-between mb-3">
-                                <button
-                                    className="btn btn-primary mr-4"
-                                    onClick={() =>
-                                        setIsModalCreateOrderOpen(true)
-                                    }>
-                                    <PlusCircleIcon className="w-6 h-6 inline" />{' '}
-                                    New order
+                                <button className="btn btn-primary mr-4" onClick={() => setIsModalCreateOrderOpen(true)}>
+                                    <PlusCircleIcon className="w-6 h-6 inline" /> New order
                                 </button>
-                                <Modal
-                                    isOpen={isModalCreateOrderOpen}
-                                    onClose={closeModal}
-                                    modalTitle="Create new order">
+                                <Modal isOpen={isModalCreateOrderOpen} onClose={closeModal} modalTitle="Create new order">
                                     <CreateOrderForm
                                         isModalOpen={setIsModalCreateOrderOpen}
                                         notification={message => {
@@ -66,17 +53,11 @@ const Transaction = ({ user }) => {
                                     />
                                 </Modal>
                                 <div className="flex justify-end gap-2">
-                                    <Link
-                                        href="/transaction/sales"
-                                        className="bg-green-500 py-2 px-6 rounded-lg text-white">
-                                        <PlusCircleIcon className="w-6 h-6 inline" />{' '}
-                                        New Sales
+                                    <Link href="/transaction/sales" className="bg-green-500 py-2 px-6 rounded-lg text-white">
+                                        <PlusCircleIcon className="w-6 h-6 inline" /> New Sales
                                     </Link>
-                                    <Link
-                                        href="/transaction/purchase"
-                                        className="bg-green-500 py-2 px-6 rounded-lg text-white ml-2">
-                                        <PlusCircleIcon className="w-6 h-6 inline" />{' '}
-                                        New Purchase
+                                    <Link href="/transaction/purchase" className="bg-green-500 py-2 px-6 rounded-lg text-white ml-2">
+                                        <PlusCircleIcon className="w-6 h-6 inline" /> New Purchase
                                     </Link>
                                 </div>
                             </div>
@@ -95,16 +76,11 @@ const Transaction = ({ user }) => {
                                         orders?.data?.map(order => (
                                             <tr key={order.id}>
                                                 <td>
-                                                    <span className="text-xs block text-slate-500">
-                                                        {formatDateTime(
-                                                            order.created_at,
-                                                        )}
-                                                    </span>
+                                                    <span className="text-xs block text-slate-500">{formatDateTime(order.created_at)}</span>
                                                     {order.order_number}
                                                     <span className="text-xs block">
                                                         {TimeAgo({
-                                                            timestamp:
-                                                                order.created_at,
+                                                            timestamp: order.created_at,
                                                         })}
                                                     </span>
                                                 </td>
@@ -112,18 +88,10 @@ const Transaction = ({ user }) => {
                                                 <td>{order.contact.name}</td>
                                                 <td>
                                                     {order.status}
-                                                    <span className="text-xs block">
-                                                        @{' '}
-                                                        {formatDateTime(
-                                                            order.updated_at,
-                                                        )}
-                                                    </span>
+                                                    <span className="text-xs block">@ {formatDateTime(order.updated_at)}</span>
                                                 </td>
                                                 <td>
-                                                    <Link
-                                                        href={`/transaction/detail/${order.id}`}>
-                                                        View
-                                                    </Link>
+                                                    <Link href={`/transaction/detail/${order.id}`}>View</Link>
                                                 </td>
                                             </tr>
                                         ))

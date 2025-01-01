@@ -1,11 +1,5 @@
 'use client'
-import {
-    EyeIcon,
-    WrenchIcon,
-    DocumentCheckIcon,
-    CheckBadgeIcon,
-    ClipboardDocumentCheckIcon,
-} from '@heroicons/react/24/solid'
+import { EyeIcon, WrenchIcon, DocumentCheckIcon, CheckBadgeIcon, ClipboardDocumentCheckIcon } from '@heroicons/react/24/solid'
 
 const Timeline = ({ status }) => {
     const steps = [
@@ -32,10 +26,7 @@ const Timeline = ({ status }) => {
     ]
 
     // Tentukan langkah aktif berdasarkan status
-    const currentStep =
-        steps.findIndex(
-            step => step.name.toLowerCase() === status?.toLowerCase(),
-        ) + 1 || 0
+    const currentStep = steps.findIndex(step => step.name.toLowerCase() === status?.toLowerCase()) + 1 || 0
 
     return (
         <div className="flex flex-col items-center justify-center py-8">
@@ -46,37 +37,24 @@ const Timeline = ({ status }) => {
                     const isLastStep = index === steps.length - 1
 
                     return (
-                        <div
-                            key={step.id}
-                            className="flex flex-col items-center text-center">
+                        <div key={step.id} className="flex flex-col items-center text-center">
                             <div className="relative">
                                 {/* Icon Circle */}
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all 
                   ${isActive ? `bg-${step.color} border-${step.color}` : 'bg-gray-200 border-gray-300'}`}>
-                                    <Icon
-                                        className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-500'}`}
-                                    />
+                                    <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                                 </div>
 
                                 {/* Connecting Line */}
                                 {!isLastStep && (
                                     <div
                                         className={`absolute top-5 left-10 w-16 h-1 ${
-                                            currentStep > step.id
-                                                ? `bg-${steps[index + 1].color}`
-                                                : 'bg-gray-300'
+                                            currentStep > step.id ? `bg-${steps[index + 1].color}` : 'bg-gray-300'
                                         }`}></div>
                                 )}
                             </div>
-                            <span
-                                className={`text-sm mt-2 ${
-                                    isActive
-                                        ? 'text-black font-semibold'
-                                        : 'text-gray-500'
-                                }`}>
-                                {step.name}
-                            </span>
+                            <span className={`text-sm mt-2 ${isActive ? 'text-black font-semibold' : 'text-gray-500'}`}>{step.name}</span>
                         </div>
                     )
                 })}

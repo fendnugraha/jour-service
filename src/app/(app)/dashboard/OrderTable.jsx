@@ -1,12 +1,5 @@
 import formatDateTime from '@/lib/formatDateTime'
-import {
-    ArrowRightCircleIcon,
-    CheckBadgeIcon,
-    EyeIcon,
-    PresentationChartBarIcon,
-    ShoppingBagIcon,
-    WrenchIcon,
-} from '@heroicons/react/24/solid'
+import { ArrowRightCircleIcon, CheckBadgeIcon, EyeIcon, PresentationChartBarIcon, ShoppingBagIcon, WrenchIcon } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 
 const OrderTable = ({ orders, errors }) => {
@@ -15,8 +8,7 @@ const OrderTable = ({ orders, errors }) => {
             <div className="flex flex-col p-6 items-start justify-between gap-4 shadow-sm bg-white rounded-2xl order-1">
                 <div>
                     <h1 className="text-sm">
-                        <PresentationChartBarIcon className="w-4 h-4 inline text-indigo-600" />{' '}
-                        Total Sales
+                        <PresentationChartBarIcon className="w-4 h-4 inline text-indigo-600" /> Total Sales
                     </h1>
                 </div>
                 <div>
@@ -25,28 +17,23 @@ const OrderTable = ({ orders, errors }) => {
                 </div>
                 <div className="border-t w-full pt-2 flex justify-end">
                     <a href="#" className="text-gray-600">
-                        View report{' '}
-                        <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
+                        View report <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
                     </a>
                 </div>
             </div>
             <div className="flex flex-col p-6 items-start justify-between gap-4 shadow-sm bg-white rounded-2xl order-2">
                 <div>
                     <h1 className="text-sm">
-                        <ShoppingBagIcon className="w-4 h-4 inline text-indigo-600" />{' '}
-                        Total Orders
+                        <ShoppingBagIcon className="w-4 h-4 inline text-indigo-600" /> Total Orders
                     </h1>
                 </div>
                 <div>
                     <span>Orders</span>
-                    <h1 className="text-3xl font-bold">
-                        {orders.data?.length}
-                    </h1>
+                    <h1 className="text-3xl font-bold">{orders.data?.length}</h1>
                 </div>
                 <div className="border-t w-full pt-2 flex justify-end">
                     <a href="#" className="text-gray-600">
-                        View report{' '}
-                        <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
+                        View report <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
                     </a>
                 </div>
             </div>
@@ -65,20 +52,15 @@ const OrderTable = ({ orders, errors }) => {
                         {orders?.data?.map(order => (
                             <tr className="border-b" key={order.id}>
                                 <td className="p-2">
-                                    <span className="text-xs block text-gray-500">
-                                        {formatDateTime(order.created_at)}
-                                    </span>
+                                    <span className="text-xs block text-gray-500">{formatDateTime(order.created_at)}</span>
                                     {order.order_number}
                                 </td>
                                 <td>{order.phone_type}</td>
                                 <td>
-                                    <span className="py-1 px-3 font-bold bg-yellow-400 rounded-full text-xs text-gray-800">
-                                        {order.status}
-                                    </span>
+                                    <span className="py-1 px-3 font-bold bg-yellow-400 rounded-full text-xs text-gray-800">{order.status}</span>
                                 </td>
                                 <td className="text-center">
-                                    <Link
-                                        href={`/transaction/detail/${order.id}`}>
+                                    <Link href={`/transaction/detail/${order.id}`}>
                                         <EyeIcon className="w-6 h-6 text-gray-700" />
                                     </Link>
                                 </td>
@@ -90,8 +72,7 @@ const OrderTable = ({ orders, errors }) => {
             <div className="flex flex-col p-6 items-start justify-between gap-4 shadow-sm bg-white rounded-2xl order-4">
                 <div>
                     <h1 className="text-sm">
-                        <WrenchIcon className="w-4 h-4 inline text-indigo-600" />{' '}
-                        On Process
+                        <WrenchIcon className="w-4 h-4 inline text-indigo-600" /> On Process
                     </h1>
                 </div>
                 <div>
@@ -100,16 +81,14 @@ const OrderTable = ({ orders, errors }) => {
                 </div>
                 <div className="border-t w-full pt-2 flex justify-end">
                     <a href="#" className="text-gray-600">
-                        View report{' '}
-                        <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
+                        View report <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
                     </a>
                 </div>
             </div>
             <div className="flex flex-col p-6 items-start justify-between gap-4 shadow-sm bg-white rounded-2xl order-5">
                 <div>
                     <h1 className="text-sm">
-                        <CheckBadgeIcon className="w-4 h-4 inline text-indigo-600" />{' '}
-                        Finished
+                        <CheckBadgeIcon className="w-4 h-4 inline text-indigo-600" /> Finished
                     </h1>
                 </div>
                 <div>
@@ -118,8 +97,7 @@ const OrderTable = ({ orders, errors }) => {
                 </div>
                 <div className="border-t w-full pt-2 flex justify-end">
                     <a href="#" className="text-gray-600">
-                        View report{' '}
-                        <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
+                        View report <ArrowRightCircleIcon className="w-4 h-4 ml-2 align-middle inline" />
                     </a>
                 </div>
             </div>

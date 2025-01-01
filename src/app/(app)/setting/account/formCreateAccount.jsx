@@ -48,9 +48,7 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
         <>
             <form>
                 <div className="mb-4">
-                    <label
-                        htmlFor="name"
-                        className="block mb-2 text-sm font-medium text-gray-900">
+                    <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                         Account Name
                     </label>
                     <Input
@@ -64,16 +62,12 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                             })
                         }
                         className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${errors.name ? 'border-red-500' : ''}`}
-                        placeholder="John Doe"
+                        placeholder="Nama Akun"
                     />
-                    {errors.name && (
-                        <p className="text-red-500 text-xs">{errors.name}</p>
-                    )}
+                    {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
                 </div>
                 <div className="mb-4">
-                    <label
-                        htmlFor="category"
-                        className="block mb-2 text-sm font-medium text-gray-900">
+                    <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900">
                         Category
                     </label>
                     <select
@@ -93,16 +87,10 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                             </option>
                         ))}
                     </select>
-                    {errors.category_id && (
-                        <p className="text-red-500 text-xs">
-                            {errors.category_id}
-                        </p>
-                    )}
+                    {errors.category_id && <p className="text-red-500 text-xs">{errors.category_id}</p>}
                 </div>
                 <div className="mb-4">
-                    <label
-                        htmlFor="st_balance"
-                        className="block mb-2 text-sm font-medium text-gray-900">
+                    <label htmlFor="st_balance" className="block mb-2 text-sm font-medium text-gray-900">
                         Starting Balance
                     </label>
                     <Input
@@ -118,11 +106,7 @@ const FormCreateAccount = ({ isModalOpen, notification, fetchAccount }) => {
                         className={`bg-gray-100 border`}
                         placeholder="0"
                     />
-                    {errors.st_balance && (
-                        <p className="text-red-500 text-xs">
-                            {errors.st_balance}
-                        </p>
-                    )}
+                    {errors.st_balance && <p className="text-red-500 text-xs">{errors.st_balance}</p>}
                 </div>
                 <div className="flex justify-end gap-2">
                     <button

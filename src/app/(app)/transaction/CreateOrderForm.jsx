@@ -44,9 +44,7 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                 <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                         <div className="mb-4">
-                            <label
-                                htmlFor="name"
-                                className="block mb-2 text-sm font-medium text-gray-900">
+                            <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                                 Customer Name
                             </label>
                             <Input
@@ -59,22 +57,14 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                                     })
                                 }
                                 className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                                    errors.customer_name
-                                        ? 'border-red-500'
-                                        : 'border-gray-300'
+                                    errors.customer_name ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 placeholder="Customer Name"
                             />
-                            {errors.customer_name && (
-                                <span className="text-red-500 text-xs">
-                                    {errors.customer_name}
-                                </span>
-                            )}
+                            {errors.customer_name && <span className="text-red-500 text-xs">{errors.customer_name}</span>}
                         </div>
                         <div className="mb-4">
-                            <label
-                                htmlFor="name"
-                                className="block mb-2 text-sm font-medium text-gray-900">
+                            <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                                 Phone Number
                             </label>
                             <Input
@@ -87,22 +77,14 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                                     })
                                 }
                                 className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                                    errors.phone_number
-                                        ? 'border-red-500'
-                                        : 'border-gray-300'
+                                    errors.phone_number ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 placeholder="Phone Number"
                             />
-                            {errors.phone_number && (
-                                <span className="text-red-500 text-xs">
-                                    {errors.phone_number}
-                                </span>
-                            )}
+                            {errors.phone_number && <span className="text-red-500 text-xs">{errors.phone_number}</span>}
                         </div>
                         <div className="mb-4">
-                            <label
-                                htmlFor="name"
-                                className="block mb-2 text-sm font-medium text-gray-900">
+                            <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                                 Address
                             </label>
                             <textarea
@@ -114,25 +96,17 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                                     })
                                 }
                                 className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                                    errors.address
-                                        ? 'border-red-500'
-                                        : 'border-gray-300'
+                                    errors.address ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 placeholder="Address"
                             />
-                            {errors.address && (
-                                <span className="text-red-500 text-xs">
-                                    {errors.address}
-                                </span>
-                            )}
+                            {errors.address && <span className="text-red-500 text-xs">{errors.address}</span>}
                         </div>
                     </div>
 
                     <div>
                         <div className="mb-4">
-                            <label
-                                htmlFor="name"
-                                className="block mb-2 text-sm font-medium text-gray-900">
+                            <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                                 Phone Type
                             </label>
                             <Input
@@ -145,22 +119,14 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                                     })
                                 }
                                 className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                                    errors.phone_type
-                                        ? 'border-red-500'
-                                        : 'border-gray-300'
+                                    errors.phone_type ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 placeholder="Phone Type"
                             />
-                            {errors.phone_type && (
-                                <span className="text-red-500 text-xs">
-                                    {errors.phone_type}
-                                </span>
-                            )}
+                            {errors.phone_type && <span className="text-red-500 text-xs">{errors.phone_type}</span>}
                         </div>
                         <div className="mb-4">
-                            <label
-                                htmlFor="name"
-                                className="block mb-2 text-sm font-medium text-gray-900">
+                            <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">
                                 Description
                             </label>
                             <textarea
@@ -173,17 +139,11 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                                     })
                                 }
                                 className={`bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                                    errors.description
-                                        ? 'border-red-500'
-                                        : 'border-gray-300'
+                                    errors.description ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 placeholder="Description"
                             />
-                            {errors.description && (
-                                <span className="text-red-500 text-xs">
-                                    {errors.description}
-                                </span>
-                            )}
+                            {errors.description && <span className="text-red-500 text-xs">{errors.description}</span>}
                         </div>
                     </div>
                 </div>
@@ -194,9 +154,7 @@ const CreateOrderForm = ({ isModalOpen, notification, fetchOrder }) => {
                         className="outline outline-indigo-800 hover:bg-indigo-400 text-white font-bold py-2 px-6 rounded-xl">
                         Cancel
                     </button> */}
-                    <Button
-                        onClick={handleCreateOrder}
-                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl">
+                    <Button onClick={handleCreateOrder} className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl">
                         Save
                     </Button>
                 </div>

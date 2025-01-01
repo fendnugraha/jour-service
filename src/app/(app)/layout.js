@@ -15,9 +15,7 @@ const AppLayout = ({ children }) => {
         <div className="flex h-screen w-screen overflow-hidden">
             <Navigation user={user} />
 
-            <main className="flex-1 bg-gray-100 min-h-screen overflow-auto">
-                {children}
-            </main>
+            <main className="flex-1 bg-gray-100 min-h-screen overflow-auto">{children}</main>
         </div>
     )
 }
