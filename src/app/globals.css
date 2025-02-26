@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-white;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75;
+    }
+
+    .table {
+        @apply divide-y divide-gray-200;
+    }
+
+    .table th,
+    .table td {
+        @apply px-6 py-2 whitespace-nowrap border-b;
+    }
+
+    .table th {
+        @apply py-4 text-gray-700 border-b-2 border-gray-200;
+    }
+}

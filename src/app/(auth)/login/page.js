@@ -1,120 +1,82 @@
-'use client'
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/libs/auth";
+import Image from "next/image";
 
-import Button from '@/components/Button'
-import Input from '@/components/Input'
-import InputError from '@/components/InputError'
-import Label from '@/components/Label'
-import Link from 'next/link'
-import { useAuth } from '@/hooks/auth'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import AuthSessionStatus from '@/app/(auth)/AuthSessionStatus'
-
-const Login = () => {
-    const router = useRouter()
-
+const LoginPage = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState([]);
+    const [status, setStatus] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
+    const router = useRouter();
     const { login } = useAuth({
-        middleware: 'guest',
-        redirectIfAuthenticated: '/dashboard',
-    })
-
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [shouldRemember, setShouldRemember] = useState(false)
-    const [errors, setErrors] = useState([])
-    const [status, setStatus] = useState(null)
+        middleware: "guest",
+        redirectIfAuthenticated: "/transaction",
+    });
 
     useEffect(() => {
         if (router.reset?.length > 0 && errors.length === 0) {
-            setStatus(atob(router.reset))
+            setStatus(atob(router.reset));
         } else {
-            setStatus(null)
+            setStatus(null);
         }
-    })
+    }, [router.reset, errors]);
 
-    const submitForm = async event => {
-        event.preventDefault()
-
-        login({
-            email,
-            password,
-            remember: shouldRemember,
-            setErrors,
-            setStatus,
-        })
-    }
-
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await login({ email, password, setErrors, setStatus, setMessage, setLoading });
+    };
     return (
         <>
-            <AuthSessionStatus className="mb-4" status={status} />
-            <form onSubmit={submitForm}>
-                {/* Email Address */}
-                <div>
-                    <Label htmlFor="email">Email</Label>
-
-                    <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        className="block mt-1 w-full"
-                        onChange={event => setEmail(event.target.value)}
-                        required
-                        autoFocus
-                    />
-
-                    <InputError messages={errors.email} className="mt-2" />
-                </div>
-
-                {/* Password */}
-                <div className="mt-4">
-                    <Label htmlFor="password">Password</Label>
-
-                    <Input
-                        id="password"
-                        type="password"
-                        value={password}
-                        className="block mt-1 w-full"
-                        onChange={event => setPassword(event.target.value)}
-                        required
-                        autoComplete="current-password"
-                    />
-
-                    <InputError messages={errors.password} className="mt-2" />
-                </div>
-
-                {/* Remember Me */}
-                <div className="block mt-4">
-                    <label
-                        htmlFor="remember_me"
-                        className="inline-flex items-center">
+            <div className="bg-white p-6 rounded-2xl shadow-2xl w-full sm:w-[400px] md:1/3">
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login to Your Account</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="mb-4">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            Email address
+                        </label>
                         <input
-                            id="remember_me"
-                            type="checkbox"
-                            name="remember"
-                            className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                            onChange={event =>
-                                setShouldRemember(event.target.checked)
-                            }
+                            type="email"
+                            id="email"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
+                        {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                            Password
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={loading || message === "Login successful!"}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {loading || message === "Login successful!" ? "Loging in ..." : "Login"}
+                    </button>
+                </form>
+                <p className="text-center mt-6 text-xs">
+                    &copy; 2022 Jour Apps by <Image src="/eightnite.png" alt="Logo" width={60} height={60} className="inline-block mx-1 w-auto" /> All rights
+                    reserved
+                </p>
+            </div>
 
-                        <span className="ml-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <Link
-                        href="/forgot-password"
-                        className="underline text-sm text-gray-600 hover:text-gray-900">
-                        Forgot your password?
-                    </Link>
-
-                    <Button className="ml-3">Login</Button>
-                </div>
-            </form>
+            <div className="italics fixed bottom-5 right-8">{message && <p className="text-green-500 text-xs">{message}</p>}</div>
         </>
-    )
-}
+    );
+};
 
-export default Login
+export default LoginPage;

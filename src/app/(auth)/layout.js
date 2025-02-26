@@ -1,26 +1,5 @@
-import Link from 'next/link'
-import AuthCard from '@/app/(auth)/AuthCard'
-import ApplicationLogo from '@/components/ApplicationLogo'
+const AuthLayout = ({ children }) => {
+    return <div className="flex items-center justify-center min-h-screen bg-slate-200 p-6">{children}</div>;
+};
 
-export const metadata = {
-    title: 'Jor Accounting Service Edition',
-}
-
-const Layout = ({ children }) => {
-    return (
-        <div>
-            <div className="text-gray-900 antialiased">
-                <AuthCard
-                    logo={
-                        <Link href="/">
-                            <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
-                        </Link>
-                    }>
-                    {children}
-                </AuthCard>
-            </div>
-        </div>
-    )
-}
-
-export default Layout
+export default AuthLayout;
