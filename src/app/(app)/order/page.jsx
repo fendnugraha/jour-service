@@ -7,6 +7,7 @@ import { useState } from "react";
 import Modal from "@/components/Modal";
 import Label from "@/components/Label";
 import Input from "@/components/Input";
+import OrderCard from "./components/OrderCard";
 const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -34,14 +35,14 @@ const OrderPage = () => {
             <Header title="Service Order" />
             <div className="py-8 relative">
                 <div className="max-w-7xl mx-auto sm:px-6">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between mb-4">
                         <div className="">
                             <button className="btn-primary text-sm">
                                 New Order <PlusCircleIcon size={20} className="inline" />
                             </button>
                         </div>
                         <div className="flex justify-end gap-2">
-                            <Input type="text" placeholder="Cari no invoice" />
+                            <Input type="search" placeholder="Cari no invoice" />
                             {userRole === "Administrator" && (
                                 <select
                                     value={selectedWarehouse}
@@ -80,6 +81,13 @@ const OrderPage = () => {
                                 <button className="btn-primary">Submit</button>
                             </Modal>
                         </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                        <OrderCard />
+                        <OrderCard />
+                        <OrderCard />
+                        <OrderCard />
+                        <OrderCard />
                     </div>
                 </div>
             </div>

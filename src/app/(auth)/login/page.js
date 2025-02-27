@@ -14,7 +14,7 @@ const LoginPage = () => {
     const router = useRouter();
     const { login } = useAuth({
         middleware: "guest",
-        redirectIfAuthenticated: "/transaction",
+        redirectIfAuthenticated: "/order",
     });
 
     useEffect(() => {
