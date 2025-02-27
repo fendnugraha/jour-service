@@ -3,11 +3,13 @@ import { useAuth } from "@/libs/auth";
 import Loading from "../loading";
 import Header from "../Header";
 import { FilterIcon, PlusCircleIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "@/components/Modal";
 import Label from "@/components/Label";
 import Input from "@/components/Input";
 import OrderCard from "./components/OrderCard";
+import CreateOrderForm from "./components/CreateOrderForm";
+import axios from "@/libs/axios";
 const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -22,14 +24,35 @@ const OrderPage = () => {
     }
 
     const userRole = user.role?.role;
+
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [startDate, setStartDate] = useState(getCurrentDate());
     const [endDate, setEndDate] = useState(getCurrentDate());
     const [selectedWarehouse, setSelectedWarehouse] = useState(1);
     const [isModalFilterDataOpen, setIsModalFilterDataOpen] = useState(false);
+    const [isModalCreateOrderOpen, setIsModalCreateOrderOpen] = useState(false);
     const closeModal = () => {
         setIsModalFilterDataOpen(false);
+        setIsModalCreateOrderOpen(false);
     };
+
+    const fetchOrder = async (url = `/api/orders`) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(url);
+            setOrders(response.data.data);
+        } catch (error) {
+            setErrors(error.response?.data?.errors || ["Something went wrong."]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrder();
+    }, []);
+    // console.log(orders);
     return (
         <>
             <Header title="Service Order" />
@@ -37,9 +60,12 @@ const OrderPage = () => {
                 <div className="max-w-7xl mx-auto sm:px-6">
                     <div className="flex justify-between mb-4">
                         <div className="">
-                            <button className="btn-primary text-sm">
+                            <button onClick={() => setIsModalCreateOrderOpen(true)} className="btn-primary text-sm">
                                 New Order <PlusCircleIcon size={20} className="inline" />
                             </button>
+                            <Modal isOpen={isModalCreateOrderOpen} onClose={closeModal} modalTitle="New Order" maxWidth="max-w-2xl">
+                                <CreateOrderForm isModalOpen={isModalCreateOrderOpen} notification={closeModal} fetchOrder={fetchOrder} />
+                            </Modal>
                         </div>
                         <div className="flex justify-end gap-2">
                             <Input type="search" placeholder="Cari no invoice" />
@@ -83,11 +109,9 @@ const OrderPage = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2">
-                        <OrderCard />
-                        <OrderCard />
-                        <OrderCard />
-                        <OrderCard />
-                        <OrderCard />
+                        {orders.data?.map((order) => (
+                            <OrderCard order={order} loading={loading} key={order.id} />
+                        ))}
                     </div>
                 </div>
             </div>
