@@ -32,48 +32,34 @@ const OrderDetail = ({ params }) => {
                             <ArrowLeftIcon className="w-4 h-4 inline mr-2" /> Kembali
                         </Link>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                        <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-300">
-                            <table className="w-full">
-                                <tbody>
-                                    <tr>
-                                        <td className="text-sm font-bold py-1">Nama Konsumen</td>
-                                        <td className="text-sm text-right">{order?.contact?.name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-sm font-bold py-1">No. Handphone</td>
-                                        <td className="text-sm text-right">{order?.contact?.phone_number}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-sm font-bold py-1">Alamat</td>
-                                        <td className="text-sm text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={2} className="text-sm">
-                                            {order?.contact?.address}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-300">
-                            <table className="w-full">
-                                <tbody>
-                                    <tr>
-                                        <td className="text-sm font-bold py-1">Type HP</td>
-                                        <td className="text-sm text-right">{order?.phone_type}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-sm font-bold py-1">Deskripsi Kerusakan</td>
-                                        <td className="text-sm text-right"></td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={2} className="text-sm bg-slate-300 px-4 py-2">
-                                            {order?.description}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div className="grid grid-cols-3 gap-2">
+                        <div className="">
+                            <div className="bg-white rounded-2xl px-4 py-2 mb-2 shadow-sm border border-slate-300">
+                                <h1 className="text-sm text-slate-500">Total Price</h1>
+                                <h1 className="text-2xl font-bold">Rp. 5.000.000</h1>
+                            </div>
+                            <div className="bg-white rounded-2xl px-4 py-2 shadow-sm border border-slate-300">
+                                <div className="mb-1">
+                                    <h1 className="text-sm text-slate-500">Nama Konsumen</h1>
+                                    <h1 className="text-sm font-bold">{order?.contact?.name}</h1>
+                                </div>
+                                <div className="mb-1">
+                                    <h1 className="text-sm text-slate-500">No. Telepon</h1>
+                                    <h1 className="text-sm">{order?.contact?.phone_number}</h1>
+                                </div>
+                                <div className="mb-1">
+                                    <h1 className="text-sm text-slate-500">Alamat</h1>
+                                    <h1 className="text-sm">{order?.contact?.address}</h1>
+                                </div>
+                                <div className="mb-1 mt-2">
+                                    <h1 className="text-sm text-slate-500">Device Type</h1>
+                                    <h1 className="text-sm font-bold">{order?.phone_type}</h1>
+                                </div>
+                                <div className="mb-1">
+                                    <h1 className="text-sm text-slate-500">Deskripsi Kerusakan</h1>
+                                    <h1 className="text-sm p-2 bg-slate-300 rounded-xl">{order?.description}</h1>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
