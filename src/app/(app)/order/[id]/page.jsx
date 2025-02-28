@@ -3,10 +3,16 @@ import { use, useEffect, useState } from "react";
 import Header from "../../Header";
 import axios from "@/libs/axios";
 import Link from "next/link";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, PlusCircleIcon } from "lucide-react";
 
 const OrderDetail = ({ params }) => {
     const { id } = use(params);
+
+    const formatPhoneNumber = (phone) => {
+        return phone
+            .replace(/\D/g, "") // Hapus non-digit
+            .replace(/(\d{4})(\d{4})(\d+)/, "$1-$2-$3"); // Tambahkan separator
+    };
 
     const [order, setOrder] = useState({});
     const fetchOrderById = async (id) => {
@@ -36,7 +42,17 @@ const OrderDetail = ({ params }) => {
                         <div className="">
                             <div className="bg-white rounded-2xl px-4 py-2 mb-2 shadow-sm border border-slate-300">
                                 <h1 className="text-sm text-slate-500">Total Price</h1>
-                                <h1 className="text-2xl font-bold">Rp. 5.000.000</h1>
+                                <h1 className="text-2xl font-bold">
+                                    <sup>Rp</sup> 5.000.000
+                                </h1>
+                            </div>
+                            <div className="mb-2 grid grid-cols-2 gap-2">
+                                <button className="bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg text-sm p-2">
+                                    <PlusCircleIcon size={16} className="inline" /> Add Parts
+                                </button>
+                                <button className="bg-red-500 hover:bg-red-400 text-white rounded-lg text-sm p-2">
+                                    <PlusCircleIcon size={16} className="inline" /> Biaya Lainnya
+                                </button>
                             </div>
                             <div className="bg-white rounded-2xl px-4 py-2 shadow-sm border border-slate-300">
                                 <div className="mb-1">
@@ -45,7 +61,7 @@ const OrderDetail = ({ params }) => {
                                 </div>
                                 <div className="mb-1">
                                     <h1 className="text-sm text-slate-500">No. Telepon</h1>
-                                    <h1 className="text-sm">{order?.contact?.phone_number}</h1>
+                                    <h1 className="text-sm">{formatPhoneNumber(order?.contact?.phone_number)}</h1>
                                 </div>
                                 <div className="mb-1">
                                     <h1 className="text-sm text-slate-500">Alamat</h1>
@@ -61,6 +77,8 @@ const OrderDetail = ({ params }) => {
                                 </div>
                             </div>
                         </div>
+                        {/* Part Replacement Table */}
+                        <div className="bg-white rounded-2xl px-4 py-2 mb-2 shadow-sm border border-slate-300"></div>
                     </div>
                 </div>
             </div>
